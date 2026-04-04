@@ -1,8 +1,10 @@
 export function BrandNavToggle({ label, className, onClick }: { label: string, className?: string, onClick: () => void }) {
+    const defaultClasses = "absolute top-5 right-5 z-50 px-4 py-2 font-mono uppercase tracking-widest transition-colors duration-300";
+    
     return (
         <button 
             onClick={onClick} 
-            className={`absolute top-5 right-5 z-50 px-4 py-2 font-mono uppercase tracking-widest mix-blend-difference ${className || 'text-white'}`}
+            className={`${defaultClasses} ${className || 'text-white'}`}
         >
             {label}
             <span className="inline-block w-[3px] h-[1.2em] bg-current animate-blink ml-1.5 align-middle" />

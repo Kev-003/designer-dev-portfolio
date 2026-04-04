@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Sora, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { BrandNav } from "@/components/layout/BrandNav";
+import { ThemeProvider } from "@/components/ThemeProvider";
+
+import { Footer } from "@/components/layout/Footer";
 
 const sora = Sora({
   variable: "--font-sora",
@@ -27,12 +30,16 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${sora.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <BrandNav />
-        <main className="flex-1 flex flex-col">
-          {children}
-        </main>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <BrandNav />
+          <main className="flex-1 flex flex-col">
+            {children}
+          </main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );

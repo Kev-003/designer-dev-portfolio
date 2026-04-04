@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
+import { LogoTicker } from '@/components/sections/LogoTicker';
 
 // Simplified MorphHeadline
 function MorphHeadline({ mode }: { mode: 'experience' | 'engineering' }) {
     return (
-        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight transition-all duration-500">
+        <h1 className={`text-4xl md:text-6xl font-extrabold tracking-tight transition-all duration-500 ${mode === 'experience' ? 'text-brand' : 'text-white'}`}>
             {mode === 'experience' ? 'Architecting the story.' : 'Engineering the reality.'}
         </h1>
     );
@@ -49,23 +51,35 @@ const DESCRIPTIONS = {
 
 export function HeroSection({ mode = 'experience', onModeChange }: Props) {
     const [activeMode, setActiveMode] = useState<'experience' | 'engineering'>(mode);
+    const { setTheme } = useTheme();
+
+    // Ensure theme matches initial mode on mount
+    useEffect(() => {
+        setTheme(mode === 'experience' ? 'light' : 'dark');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleModeChange = (value: 'experience' | 'engineering') => {
         setActiveMode(value);
+        setTheme(value === 'experience' ? 'light' : 'dark');
         onModeChange?.(value);
     };
 
     return (
-        <div className="space-y-8 pt-24 px-6 md:px-12 max-w-4xl mx-auto">
-            <div className="flex items-center">
-                <SlidingToggle activeMode={activeMode} onChange={handleModeChange} />
+        <div className="h-[95dvh] flex flex-col pb-12">
+            <div className="flex-1 space-y-4 px-6 md:px-12 max-w-4xl mx-auto flex flex-col justify-center">
+                <div className="flex items-center">
+                    <SlidingToggle activeMode={activeMode} onChange={handleModeChange} />
+                </div>
+
+                <MorphHeadline mode={activeMode} />
+
+                <p className={`max-w-xl text-lg md:text-xl leading-relaxed ${activeMode === 'experience' ? 'text-foreground opacity-90' : 'text-zinc-400'}`}>
+                    {DESCRIPTIONS[activeMode]}
+                </p>
             </div>
 
-            <MorphHeadline mode={activeMode} />
-
-            <p className="text-zinc-600 dark:text-zinc-400 max-w-xl text-lg md:text-xl leading-relaxed">
-                {DESCRIPTIONS[activeMode]}
-            </p>
+            <LogoTicker />
         </div>
     );
 }

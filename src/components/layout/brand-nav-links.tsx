@@ -21,7 +21,7 @@ export function BrandNavLinks({ items, onSelect, containerRef }: Props) {
                 <div key={item.href}>
                     <Link
                         href={item.href}
-                        className="text-black dark:text-white hover:opacity-75 transition-opacity"
+                        className="text-brand dark:text-white hover:opacity-75 transition-opacity"
                         onClick={onSelect}
                     >
                         {item.label}
