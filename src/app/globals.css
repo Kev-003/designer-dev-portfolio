@@ -61,3 +61,12 @@ body {
 .animate-blink {
   animation: blink 1s step-end infinite;
 }
+
+/* Cross-browser scrollbar hide — used by horizontal scroll containers */
+.no-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
