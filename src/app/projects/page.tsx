@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import gsap from "gsap";
 import { PROJECTS, type Project } from "@/lib/projects";
 import { ProjectTag } from "@/components/ui/ProjectTag";
 import { ArrowRight } from "lucide-react";
 import TextPressure from "@/components/ui/TextPressure";
+
+import { useGSAP } from "@gsap/react";
 
 // ─── Project Row Component ──────────────────────────────────────────────────
 
@@ -15,24 +18,27 @@ function ProjectRow({ project }: { project: Project }) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Background and height transition
-      gsap.to(containerRef.current, {
-        backgroundColor: isHovered ? project.brandColor : "transparent",
-        duration: 0.4,
-        ease: "power2.out",
-      });
+  useGSAP(() => {
+    if (!containerRef.current || !contentRef.current) return;
 
-      gsap.to(contentRef.current, {
-        height: isHovered ? "auto" : 0,
-        opacity: isHovered ? 1 : 0,
-        duration: 0.4,
-        ease: "power3.out",
-      });
-    }, containerRef);
-    return () => ctx.revert();
-  }, [isHovered, project.brandColor]);
+    // Background transition
+    gsap.to(containerRef.current, {
+      backgroundColor: isHovered ? project.brandColor : "transparent",
+      duration: 0.4,
+      ease: "power2.out",
+      overwrite: true
+    });
+
+    // Height and Opacity transition
+    gsap.to(contentRef.current, {
+      height: isHovered ? "auto" : 0,
+      opacity: isHovered ? 1 : 0,
+      marginTop: isHovered ? (window.innerWidth >= 768 ? 32 : 24) : 0,
+      duration: 0.5,
+      ease: isHovered ? "power3.out" : "power3.inOut",
+      overwrite: true
+    });
+  }, { dependencies: [isHovered, project.brandColor], scope: containerRef, revertOnUpdate: false });
 
   return (
     <Link
@@ -55,27 +61,80 @@ function ProjectRow({ project }: { project: Project }) {
 
         {/* Action Icon */}
         <div className="hidden md:flex items-center justify-center w-12 h-12 rounded-full border border-zinc-700 text-zinc-400 group-hover:border-white/30 group-hover:text-white transition-all">
-          <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform" />
+          <ArrowRight
+            size={24}
+            className="group-hover:translate-x-1 transition-transform"
+          />
         </div>
       </div>
 
       {/* Expanded Content */}
-      <div ref={contentRef} className="relative z-10 overflow-hidden h-0 opacity-0 mt-6 md:mt-8">
-        <div className="grid md:grid-cols-[1fr_auto] gap-8 items-end">
-          <div className="max-w-2xl">
+      <div
+        ref={contentRef}
+        className="relative z-10 overflow-hidden mt-0 opacity-0 h-0"
+      >
+        <div className="flex flex-col gap-8 items-start justify-between w-full">
+          <div className="max-w-full flex lg:mt-auto">
             <p className="text-xl md:text-2xl font-medium leading-snug text-white/90">
               {project.mission}
             </p>
-            <div className="flex flex-wrap gap-2 mt-6">
+            <div className="flex flex-wrap gap-2 mt-6 justify-end">
               {project.tags.map((tag) => (
-                <ProjectTag 
-                  key={tag} 
-                  tag={tag} 
-                  className="bg-white/10 text-white border-white/20" 
+                <ProjectTag
+                  key={tag}
+                  tag={tag}
+                  className="bg-white/10 text-white border-white/20"
                 />
               ))}
             </div>
           </div>
+
+          {/* Media Showcase Grid */}
+          {project.assets.showcase && (
+            <div className="w-full grid grid-cols-1 sm:grid-cols-4 gap-3 shrink-0">
+              {/* Main Highlight (Video or Image) - Spans 2 columns */}
+              <div className="sm:col-span-2 aspect-video rounded-lg overflow-hidden bg-zinc-900/50 border border-white/10 relative">
+                {project.assets.showcase.highlight.type === "video" ? (
+                  <video
+                    src={project.assets.showcase.highlight.url}
+                    preload="none"
+                    loop
+                    muted
+                    playsInline
+                    autoPlay
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <Image
+                    src={project.assets.showcase.highlight.url}
+                    alt={`${project.name} Highlight`}
+                    fill
+                    className="object-cover"
+                  />
+                )}
+              </div>
+
+              {/* Supporting Images - Column of 2 images */}
+              <div className="grid grid-cols-2 gap-3 col-span-2">
+                <div className="aspect-video rounded-lg overflow-hidden bg-zinc-900/50 border border-white/10 relative">
+                  <Image
+                    src={project.assets.showcase.images[0]}
+                    alt={`${project.name} Media 1`}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="aspect-video rounded-lg overflow-hidden bg-zinc-900/50 border border-white/10 relative">
+                  <Image
+                    src={project.assets.showcase.images[1]}
+                    alt={`${project.name} Media 2`}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </Link>
@@ -86,6 +145,11 @@ function ProjectRow({ project }: { project: Project }) {
 
 export default function ProjectsPage() {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Get unique tags for the filter
   const allTags = Array.from(new Set(PROJECTS.flatMap((p) => p.tags)));
@@ -102,13 +166,14 @@ export default function ProjectsPage() {
           Selected Works
         </span>
         <div className="relative h-[200px] md:h-[300px] w-full -ml-3 mt-10 overflow-visible">
-          <TextPressure 
-            text="portfolio" 
-            flex={true} 
-            scale={true} 
-            textColor="#FFFFFF"
-
-          />
+          {isMounted && (
+            <TextPressure
+              text="portfolio"
+              flex={true}
+              scale={true}
+              textColor="#FFFFFF"
+            />
+          )}
         </div>
 
         {/* Filter Bar */}

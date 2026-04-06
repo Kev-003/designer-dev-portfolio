@@ -29,6 +29,16 @@ export type ProjectAssets = {
   snippets?: string[];
   /** Anything that doesn't fit the categories above */
   extras?: string[];
+  /** Media showcase in the expanded project row */
+  showcase?: {
+    /** Primary media, usually a video spanning the largest space */
+    highlight: {
+      type: "video" | "image";
+      url: string;
+    };
+    /** 2 supporting images to display alongside the highlight */
+    images: [string, string];
+  };
 };
 
 export type Project = {
@@ -78,7 +88,18 @@ export const PROJECTS: Project[] = [
       mockups: [],
       sketches: [],
       vectorization: [],
+      showcase: {
+      highlight: {
+        type: "video",
+        url: "/projects/courant/highlight.mp4",
+      },
+      images: [
+        "/projects/courant/showcase-1.jpg",
+        "/projects/courant/showcase-2.jpg",
+      ],
     },
+    },
+      
   },
   {
     slug: "bataeno-pass",
