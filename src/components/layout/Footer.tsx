@@ -56,7 +56,7 @@ export function Footer() {
                         Projects
                     </p>
                     <h2
-                        className="text-4xl md:text-5xl font-light mt-7 leading-tight"
+                        className="text-4xl md:text-5xl font-light mt-7 leading-tight font-sans"
                     >
                         See What Else I’ve Been Working On
                     </h2>
@@ -82,13 +82,13 @@ export function Footer() {
                         Get In Touch
                     </p>
                     <h2
-                        className="text-4xl md:text-5xl font-light mt-7 leading-tight max-w-md"
+                        className="text-4xl md:text-5xl font-light mt-7 leading-tight max-w-md font-sans"
                     >
                         Got An Idea In Mind?
                     </h2>
                 </div>
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end mt-12 gap-6">
-                    <h1 className="font-medium text-6xl md:text-8xl tracking-tight leading-[0.85]">
+                    <h1 className="font-medium text-6xl md:text-8xl tracking-tight leading-[0.85] font-sans">
                         Start a Project
                     </h1>
                     <ArrowUpRight size={32} strokeWidth={2} className="flex-shrink-0" />

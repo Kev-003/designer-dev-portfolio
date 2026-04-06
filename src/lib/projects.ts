@@ -115,7 +115,7 @@ export const PROJECTS: Project[] = [
     tags: ["Brand Identity"],
     keywords: ["Corporate Identity", "Developer Branding", "Minimalism", "B2B"],
     tools: ["Figma", "Adobe Illustrator"],
-    brandColor: "#0891b2",
+    brandColor: "#0052cc",
     assets: {
       cover: "/projects/edmer-software/cover.jpg",
       logo: "/projects/edmer-software/logo.svg",

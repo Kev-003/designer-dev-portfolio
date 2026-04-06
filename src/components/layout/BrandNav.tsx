@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrandNavLinks, type BrandNavLinkItem } from "@/components/layout/brand-nav-links";
 import { BrandNavFooter, BrandNavToggle } from "@/components/layout/brand-nav-extras";
 import { useBrandNavAnimation } from "@/hooks/use-brand-nav-animation";
 import { useBrandNavTyping } from "@/hooks/use-brand-nav-typing";
+import { cn } from "@/lib/utils";
 
 const navItems: BrandNavLinkItem[] = [
     { label: "about me.", href: "/about" },
@@ -28,6 +29,17 @@ export function BrandNav() {
 
     const handleClose = () => setIsOpen(false);
 
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [isOpen]);
+
     return (
         <div className="relative w-full z-50">
             <BrandNavToggle
@@ -38,9 +50,10 @@ export function BrandNav() {
 
             <div
                 ref={overlayRef}
-                className={`fixed inset-0 z-40 flex h-screen flex-col justify-between overflow-y-auto bg-white/95 dark:bg-black/95 backdrop-blur-lg p-5 text-brand dark:text-white md:p-10 ${
+                className={cn(
+                    "fixed inset-0 z-40 flex h-screen flex-col justify-between overflow-y-auto bg-white/95 dark:bg-black/95 backdrop-blur-lg p-5 text-brand dark:text-white md:p-10 font-sans",
                     isOpen ? "pointer-events-auto" : "pointer-events-none"
-                }`}
+                )}
                 aria-hidden={isOpen ? "false" : "true"}
             >
                 <div className="flex items-start justify-start">
@@ -62,14 +75,15 @@ export function BrandNav() {
                     </Link>
                 </div>
 
-                <div className="flex flex-1 flex-col justify-end pt-6 md:justify-between">
+                <div className="flex-1 flex flex-col justify-end md:justify-center">
                     <BrandNavLinks
                         items={navItems}
                         onSelect={handleClose}
                         containerRef={menuItemsRef}
                     />
-                    <BrandNavFooter containerRef={socialsRef} />
                 </div>
+
+                <BrandNavFooter containerRef={socialsRef} />
             </div>
         </div>
     );

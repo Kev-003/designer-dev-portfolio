@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { PROJECTS, type Project } from "@/lib/projects";
 import { ProjectTag } from "@/components/ui/ProjectTag";
 import { ArrowRight } from "lucide-react";
+import TextPressure from "@/components/ui/TextPressure";
 
 // ─── Project Row Component ──────────────────────────────────────────────────
 
@@ -100,9 +101,15 @@ export default function ProjectsPage() {
         <span className="font-mono text-[11px] tracking-[0.3em] text-brand uppercase block mb-4">
           Selected Works
         </span>
-        <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white uppercase italic">
-          Portfolio
-        </h1>
+        <div className="relative h-[200px] md:h-[300px] w-full -ml-3 mt-10 overflow-visible">
+          <TextPressure 
+            text="portfolio" 
+            flex={true} 
+            scale={true} 
+            textColor="#FFFFFF"
+
+          />
+        </div>
 
         {/* Filter Bar */}
         <div className="flex flex-wrap gap-3 mt-12 md:mt-16 border-b border-zinc-800 pb-8">
