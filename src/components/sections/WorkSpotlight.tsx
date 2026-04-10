@@ -17,14 +17,15 @@ const BRAND_HEX = "#4832d5";
 
 function ProjectCard({ project }: { project: Project }) {
   const imgWrapRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const arrowRef = useRef<HTMLSpanElement>(null);
   const [imgError, setImgError] = useState(false);
 
   const enter = () => {
-    gsap.to(imgWrapRef.current, {
-      scale: 0.97,
+    gsap.to(imgRef.current, {
+      scale: 1,
       duration: 0.55,
       ease: "power2.out",
     });
@@ -48,8 +49,8 @@ function ProjectCard({ project }: { project: Project }) {
   };
 
   const leave = () => {
-    gsap.to(imgWrapRef.current, {
-      scale: 1,
+    gsap.to(imgRef.current, {
+      scale: 1.1,
       duration: 0.55,
       ease: "power2.inOut",
     });
@@ -65,91 +66,104 @@ function ProjectCard({ project }: { project: Project }) {
   return (
     <Link
       href={`/projects/${project.slug}`}
-      // Width: 85vw on mobile, fixed on larger screens — creates a "peek" into the next card
-      className="block shrink-0 select-none w-[85vw] sm:w-[500px] md:w-[640px]"
+      className="block shrink-0 select-none w-[65vw] sm:w-[500px] md:w-[640px]"
       onMouseEnter={enter}
       onMouseLeave={leave}
       draggable={false}
     >
-      {/* Cover image */}
-      <div
-        ref={imgWrapRef}
-        className="overflow-hidden w-full aspect-[16/10] bg-zinc-900"
-      >
-        {imgError ? (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="font-mono text-xs text-zinc-700">
-              cover / {project.slug}
-            </span>
-          </div>
-        ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={project.assets.cover}
-            alt={project.name}
-            onError={() => setImgError(true)}
-            className="w-full h-full object-cover"
-            draggable={false}
-          />
-        )}
-      </div>
-
-      {/* Title row — the white overlay rises here on hover */}
-      <div className="relative overflow-hidden mt-4 py-1 border-b border-zinc-800">
-        {/* Rising white overlay — scaleY from bottom */}
-        <div
-          ref={overlayRef}
-          aria-hidden
-          className="absolute inset-0 bg-white origin-bottom pointer-events-none scale-y-0"
+      {/* ── Mobile "Story" Layout (Visible only on < sm) ── */}
+      <div className="sm:hidden relative w-full aspect-[3/4.5] overflow-hidden rounded-xl bg-zinc-900 shadow-2xl group active:scale-95 transition-transform duration-300">
+        <img
+          src={project.assets.cover}
+          alt={project.name}
+          className="absolute inset-0 w-full h-full object-cover opacity-70"
         />
+        {/* Bottom Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
 
-        {/* Title + arrow */}
-        <div className="relative flex items-center justify-between gap-4 mr-3">
-          <h3
-            ref={titleRef}
-            className="text-2xl md:text-3xl font-bold tracking-tight leading-tight text-zinc-100"
-          >
+        {/* Story Content - Bottom Anchored */}
+        <div className="absolute bottom-0 left-0 right-0 p-5 flex flex-col gap-3">
+          <div className="flex flex-wrap gap-1.5">
+            {project.tags.slice(0, 2).map((tag) => (
+              <ProjectTag
+                key={tag}
+                tag={tag}
+                className="bg-white/10 text-white border-white/20 backdrop-blur-md !py-0.5 !px-2 rounded-full !text-[9px]"
+              />
+            ))}
+          </div>
+          <h3 className="text-xl font-bold tracking-tight text-white leading-tight">
             {project.name}
           </h3>
-
-          <span
-            ref={arrowRef}
-            aria-hidden
-            className="shrink-0 opacity-0 -translate-x-2.5 text-brand"
-          >
-            <MoveRight size={32} strokeWidth={1.5} />
-          </span>
         </div>
       </div>
 
-      {/* Mission + meta */}
-      {/* Mission + meta — Flexible grid to prevent tag squishing */}
-      <div className="mt-4 grid grid-cols-[1fr_auto] gap-6">
-        {/* Mission — takes available space */}
-        <p className="text-sm text-zinc-500 leading-relaxed">
-          {project.mission}
-        </p>
+      {/* ── Desktop Default Layout (Hidden on mobile) ── */}
+      <div className="hidden sm:block">
+        {/* Cover image */}
+        <div
+          ref={imgWrapRef}
+          className="overflow-hidden w-full aspect-[16/10] bg-zinc-900 relative"
+        >
+          {!imgError && (
+            <img
+              ref={imgRef}
+              src={project.assets.cover}
+              alt={project.name}
+              onError={() => setImgError(true)}
+              className="absolute inset-0 w-full h-full object-cover" // remove scale-[1.1] from className — let GSAP own it entirely
+              draggable={false}
+            />
+          )}
+        </div>
 
-        {/* Year + tags — rightmost column */}
-        <div className="flex flex-col items-end gap-2 min-w-[140px]">
-          <span className="font-mono text-xs text-zinc-600">
-            {project.year}
-          </span>
+        {/* Title row — the white overlay rises here on hover */}
+        <div className="relative overflow-hidden mt-4 py-1 border-b border-zinc-800">
+          <div
+            ref={overlayRef}
+            aria-hidden
+            className="absolute inset-0 bg-white origin-bottom pointer-events-none scale-y-0"
+          />
+          <div className="relative flex items-center justify-between gap-4 mr-3">
+            <h3
+              ref={titleRef}
+              className="text-2xl md:text-3xl font-bold tracking-tight leading-tight text-zinc-100"
+            >
+              {project.name}
+            </h3>
+            <span
+              ref={arrowRef}
+              aria-hidden
+              className="shrink-0 opacity-0 -translate-x-2.5 text-brand"
+            >
+              <MoveRight size={32} strokeWidth={1.5} />
+            </span>
+          </div>
+        </div>
 
-          {/* Tags — 2-column grid so max 2 tags per row */}
-          <div className="grid grid-cols-2 gap-1 w-full">
-            {project.tags.map((tag, i) => {
-              // If this is a lone trailing tag (odd total), push it to col 2
-              const isTrailing =
-                i === project.tags.length - 1 && project.tags.length % 2 === 1;
-              return (
-                <ProjectTag
-                  key={tag}
-                  tag={tag}
-                  className={isTrailing ? "col-start-2" : ""}
-                />
-              );
-            })}
+        {/* Mission + meta */}
+        <div className="mt-4 grid grid-cols-[1fr_auto] gap-6">
+          <p className="text-sm text-zinc-500 leading-relaxed">
+            {project.mission}
+          </p>
+          <div className="flex flex-col items-end gap-2 min-w-[140px]">
+            <span className="font-mono text-xs text-zinc-600">
+              {project.year}
+            </span>
+            <div className="grid grid-cols-2 gap-1 w-full">
+              {project.tags.map((tag, i) => {
+                const isTrailing =
+                  i === project.tags.length - 1 &&
+                  project.tags.length % 2 === 1;
+                return (
+                  <ProjectTag
+                    key={tag}
+                    tag={tag}
+                    className={isTrailing ? "col-start-2" : ""}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

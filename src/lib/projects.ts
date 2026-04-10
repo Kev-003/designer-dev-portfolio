@@ -42,8 +42,11 @@ export type ProjectAssets = {
     images: [string, string];
   };
   mindMap?: {
-    nodes: string;  // a mini DSL string
+    nodes: string; // a mini DSL string
   };
+  /** Short paragraph or takeaway for the process' final conclusion slide */
+  conclusions?: string;
+  liveUrl?: string;
 };
 
 export type Project = {
@@ -92,7 +95,8 @@ export const PROJECTS: Project[] = [
       "A smart power management system that simplifies IoT energy data into intuitive, actionable insights for sustainability-minded users.",
     tags: ["Brand Identity", "UI/UX"],
     keywords: ["Realtime Monitoring", "Cost Optimization", "Sustainability", "IoT", "Clean Energy"],
-    tools: ["Figma", "Adobe Illustrator", "Adobe Photoshop"],
+    technologies:["Filament PHP", "Laravel", "Tailwind CSS", "Alpine.js", "MySQL", "Flask", "Python", "TensorFlow", "PlatformIO", "Scikit-learn", "MQTT"],
+    tools: ["Adobe After Effects", "Adobe Illustrator", "Adobe Photoshop"],
     brandColor: "#e8a216",
     brandColors: ["#e8a216", "#131313", "#EAEAEA", "#D7D6D6"],
     typography: [
@@ -109,7 +113,7 @@ export const PROJECTS: Project[] = [
       },
     ],
     assets: {
-      cover: "/projects/courant/cover.jpg",
+      cover: "/projects/courant/cover.webp",
       logo: "/projects/courant/logo.svg",
       logotype: "/projects/courant/logotype.svg",
       icon: "/projects/courant/icon.svg",
@@ -117,14 +121,20 @@ export const PROJECTS: Project[] = [
       mockups: [],
       sketches: ["/projects/courant/sketches.webp"],
       vectorization: ["/projects/courant/icon-comp.svg"],
+      extras: [
+        "/projects/courant/tiktok-cover.webp",
+        "/projects/courant/graph.webp",
+        "/projects/courant/graph-2.webp",
+        "/projects/courant/banner.webp",
+      ],
       showcase: {
       highlight: {
         type: "video",
         url: "/projects/courant/highlight.mp4",
       },
       images: [
-        "/projects/courant/showcase-1.jpg",
-        "/projects/courant/showcase-2.jpg",
+        "/projects/courant/showcase-1.webp",
+        "/projects/courant/showcase-2.webp",
       ],
     },
     mindMap: {
@@ -153,6 +163,8 @@ export const PROJECTS: Project[] = [
       `
     },
     fullPage: "/projects/courant/full-site.webp",
+    conclusions: "MSMEs don't have facilities teams — they need a system that speaks plainly and responds before damage is done. Courant's identity was built around that contract. The mark distills the project's core tensions: technical precision softened by rounded, approachable forms. Yellow surfaces only where it matters — anomaly alerts, repair states, critical thresholds — doing organizational work across multiple devices rather than purely decorative. The goal was to make Isolation Forest and LLM-driven anomaly detection feel like a calm, confident assistant. Not a dashboard. Not a warning system. Just clarity, exactly when you need it.",
+    liveUrl: "https://courant.energy",
     },
       
   },
@@ -168,7 +180,8 @@ export const PROJECTS: Project[] = [
       "A full-stack governmental module digitizing barangay operations, census tracking, and document issuance for provincial-scale efficiency.",
     tags: ["Full-Stack", "System Design", "Database Design"],
     keywords: ["Government Tech", "Public Service", "Data Security", "Digital Transformation"],
-    technologies: ["Laravel", "React", "Inertia.js", "PostgreSQL", "Tailwind CSS"],
+    technologies: ["Laravel", "Livewire", "Reverb", "Alpine.js", "MySQL", "Tailwind CSS", "Filament PHP"],
+    tools: ["Atlassian Confluence", "DBDiagram.io"],
     brandColor: "#059669",
     assets: {
       cover: "/projects/bataeno-pass/cover.jpg",
@@ -214,13 +227,16 @@ export const PROJECTS: Project[] = [
       "An immersive, discography-first web experience capturing the whimsical essence of a Bataan-based indie-pop band.",
     tags: ["Web Design"],
     keywords: ["Band Website", "Music Industry", "Immersive UX", "Discography"],
-    tools: ["Figma"],
-    technologies: ["React", "Tailwind CSS"],
-    brandColor: "#e11d48",
+    tools: ["Adobe Illustrator"],
+    technologies: ["Laravel", "React", "Tailwind CSS", "Filament PHP"],
+    brandColor: "#932E2E",
     assets: {
-      cover: "/projects/strawberry-sweets/cover.jpg",
+      cover: "/projects/strawberry-sweets/cover.webp",
       logo: "/projects/strawberry-sweets/logo.svg",
       mockups: [],
+      fullPage: "/projects/strawberry-sweets/full-site.webp",
+      liveUrl: "https://strawberry-sweets-music.cc",
     },
+    
   },
 ];

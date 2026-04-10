@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { BrandNavLinks, type BrandNavLinkItem } from "@/components/layout/brand-nav-links";
 import { BrandNavFooter, BrandNavToggle } from "@/components/layout/brand-nav-extras";
@@ -16,6 +17,21 @@ const navItems: BrandNavLinkItem[] = [
 
 export function BrandNav() {
     const [isOpen, setIsOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+    const pathname = usePathname();
+
+    // Close menu when route changes
+    useEffect(() => {
+        setIsOpen(false);
+    }, [pathname]);
+    
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 50);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
     
     const label = useBrandNavTyping({
         isActive: isOpen,
@@ -41,18 +57,29 @@ export function BrandNav() {
     }, [isOpen]);
 
     return (
-        <div className="relative w-full z-50">
-            <BrandNavToggle
-                label={label}
-                className={isOpen ? "text-brand dark:text-white" : "text-brand dark:text-white"}
-                onClick={() => setIsOpen((prev) => !prev)}
-            />
+        <div className="z-50">
+            <div 
+                className={cn(
+                    "fixed top-6 right-6 transition-all duration-500 ease-in-out z-[60]",
+                    scrolled && !isOpen
+                        ? "bg-black/40 backdrop-blur-xl border border-white/10 rounded-full py-1.5 px-3 shadow-2xl scale-95 origin-right" 
+                        : "bg-transparent py-2 px-4"
+                )}
+            >
+                <BrandNavToggle
+                    label={label}
+                    className={cn(
+                        "relative transition-all duration-300 translate-y-px text-brand dark:text-white"
+                    )}
+                    onClick={() => setIsOpen((prev) => !prev)}
+                />
+            </div>
 
             <div
                 ref={overlayRef}
                 className={cn(
-                    "fixed inset-0 z-40 flex h-screen flex-col justify-between overflow-y-auto bg-white/95 dark:bg-black/95 backdrop-blur-lg p-5 text-brand dark:text-white md:p-10 font-sans",
-                    isOpen ? "pointer-events-auto" : "pointer-events-none"
+                    "fixed inset-0 z-40 flex h-screen flex-col justify-between overflow-y-auto bg-white/95 dark:bg-black/95 backdrop-blur-lg p-5 text-brand dark:text-white md:p-10 font-sans opacity-0 invisible pointer-events-none",
+                    isOpen && "pointer-events-auto"
                 )}
                 aria-hidden={isOpen ? "false" : "true"}
             >

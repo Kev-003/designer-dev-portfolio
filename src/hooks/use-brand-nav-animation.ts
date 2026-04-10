@@ -26,34 +26,34 @@ export function useBrandNavAnimation({ isOpen }: UseBrandNavAnimationArgs) {
 
             tl.fromTo(
                 overlay,
-                { yPercent: -100, opacity: 1 },
-                { yPercent: 0, duration: 0.35, ease: 'circ.out' },
+                { autoAlpha: 0, yPercent: -100 },
+                { autoAlpha: 1, yPercent: 0, duration: 0.35, ease: 'power2.out' }
             );
 
             if (menuItems.length > 0) {
                 tl.fromTo(
                     menuItems,
                     { 
-                        opacity: 0.5,
-                        y: -20,
-                        filter: 'blur(100px)',
+                        opacity: 0,
+                        y: 20,
+                        filter: 'blur(10px)',
                     },
                     { 
                         opacity: 1,
                         y: 0,
                         filter: 'blur(0px)',
-                        stagger: 0.1,
-                        duration: 0.7,
+                        stagger: 0.08,
+                        duration: 0.5,
                         ease: 'power3.out',
                     },
-                    '-=0.1'
+                    '-=0.15'
                 );
             }
 
             if (socials.length > 0) {
                 tl.fromTo(
                     socials,
-                    { opacity: 0, y: -10 },
+                    { opacity: 0, y: 10 },
                     {
                         opacity: 1,
                         y: 0,

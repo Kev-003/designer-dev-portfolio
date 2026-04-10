@@ -191,10 +191,10 @@ function AccordionItem({
         id={contentId}
         ref={contentRef}
         role="region"
-        className="overflow-hidden h-0 opacity-0"
+        className="overflow-hidden h-0 opacity-0 "
       >
         {/* Indent to align with the title column */}
-        <div className="grid grid-cols-1 md:grid-cols-[2.5rem_1fr] md:gap-4 pb-8">
+        <div className="grid grid-cols-1 md:grid-cols-[2.5rem_1fr] md:gap-4 pb-8 mr-10 lg:mr-0">
           <div className="hidden md:block" aria-hidden /> {/* spacer */}
           <div className="flex flex-col md:flex-row gap-8">
             {/* Subtitle + description */}
@@ -248,7 +248,7 @@ export function ProcessSection() {
               The Project Lifecycle.
             </h2>
           </div>
-          <p className="md:max-w-xs text-base text-zinc-500 dark:text-zinc-400 leading-relaxed">
+          <p className="md:max-w-xs text-base text-zinc-500 dark:text-zinc-400 leading-relaxed mr-20">
             Design thinking and engineering logic — never separated, always
             synchronized.
           </p>

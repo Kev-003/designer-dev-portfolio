@@ -202,6 +202,13 @@ function GallerySection({
   onOpen: (index: number) => void;
 }) {
   if (!images.length) return null;
+
+  const isOtherAssets = label === "Other Assets";
+
+  // Split into two independent columns — odd indices left, even right
+  const leftCol = images.filter((_, i) => i % 2 === 0);
+  const rightCol = images.filter((_, i) => i % 2 !== 0);
+
   return (
     <div className="mb-16 last:mb-0">
       <div className="flex items-center gap-4 mb-6">
@@ -210,28 +217,61 @@ function GallerySection({
         </span>
         <div className="flex-1 h-px bg-zinc-800" />
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-        {images.map((src, i) => (
-          <button
-            key={i}
-            onClick={() => onOpen(i)}
-            className="group relative aspect-[4/3] overflow-hidden rounded-lg bg-zinc-900 focus-visible:ring-2 focus-visible:ring-brand"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={src}
-              alt={`${label} ${i + 1}`}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              draggable={false}
-            />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-end p-3">
-              <span className="font-mono text-[10px] tracking-widest uppercase text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                View
-              </span>
+
+      {isOtherAssets ? (
+        <div className="flex gap-3 items-start">
+          {[leftCol, rightCol].map((col, colIdx) => (
+            <div key={colIdx} className="flex flex-col gap-3 flex-1 min-w-0">
+              {col.map((src, i) => {
+                const globalIdx = colIdx === 0 ? i * 2 : i * 2 + 1;
+                return (
+                  <button
+                    key={globalIdx}
+                    onClick={() => onOpen(globalIdx)}
+                    className="group relative w-full overflow-hidden rounded-lg bg-zinc-900 p-8 focus-visible:ring-2 focus-visible:ring-brand block"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={src}
+                      alt={`${label} ${globalIdx + 1}`}
+                      className="w-full h-auto object-contain transition-transform duration-500 group-hover:scale-102"
+                      draggable={false}
+                    />
+                    <div className="absolute inset-0 flex items-end p-3 bg-black/0 group-hover:bg-black/40 transition-colors duration-300">
+                      <span className="font-mono text-[10px] tracking-widest uppercase text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                        View
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
-          </button>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {images.map((src, i) => (
+            <button
+              key={i}
+              onClick={() => onOpen(i)}
+              className="group relative aspect-[4/3] overflow-hidden rounded-lg bg-zinc-900 focus-visible:ring-2 focus-visible:ring-brand"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={src}
+                alt={`${label} ${i + 1}`}
+                className="w-full h-full object-cover absolute inset-0 transition-transform duration-500 group-hover:scale-105"
+                draggable={false}
+              />
+              <div className="absolute inset-0 flex items-end p-3 bg-black/0 group-hover:bg-black/40 transition-colors duration-300">
+                <span className="font-mono text-[10px] tracking-widest uppercase text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                  View
+                </span>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -406,12 +446,16 @@ function ProcessSequence({
   finalMark,
   projectName,
   mindMap,
+  conclusion,
+  liveUrl,
 }: {
   sketches?: string[];
   vectorization?: string[];
   finalMark?: string;
   projectName: string;
   mindMap?: { nodes: string };
+  conclusion?: string;
+  liveUrl?: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -440,12 +484,11 @@ function ProcessSequence({
             trigger: container,
             pin: true,
             start: "top top",
-            // Use a generous multi-screen scroll distance
-            end: () => `+=${track.scrollWidth}`, 
+            end: () => `+=${track.scrollWidth - window.innerWidth}`,
             scrub: 1,
             invalidateOnRefresh: true,
             anticipatePin: 1,
-            pinSpacing: true,
+            fastScrollEnd: true,
             onUpdate: (self) => {
               if (progressRef.current) {
                 gsap.set(progressRef.current, { scaleX: self.progress });
@@ -458,9 +501,6 @@ function ProcessSequence({
           x: () => -(track.scrollWidth - window.innerWidth),
           ease: "none",
         });
-
-        // Force a refresh once the timeline is set
-        ScrollTrigger.refresh();
       });
     }, containerRef);
 
@@ -485,7 +525,7 @@ function ProcessSequence({
 
       <div
         ref={trackRef}
-        className="flex flex-col md:flex-row h-auto md:h-screen items-center"
+        className="flex flex-col md:flex-row h-auto md:h-screen items-center will-change-transform"
       >
         {/* 1.1. Sketches */}
         {sketches && sketches.length > 0 && (
@@ -493,25 +533,41 @@ function ProcessSequence({
             <span className="font-mono text-[11px] tracking-[0.3em] text-zinc-600 uppercase mb-12">
               01 — Ideation &amp; Sketches
             </span>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-              {sketches.slice(0, 4).map((s, i) => (
-                <div
-                  key={i}
-                  className={`relative aspect-[3/4] rounded-lg overflow-hidden bg-zinc-900 border border-zinc-800 transition-all duration-700 shadow-2xl ${
-                    i % 2 === 0
-                      ? "rotate-1 md:rotate-2 md:translate-y-4"
-                      : "-rotate-1 md:-rotate-2 md:-translate-y-4"
-                  }`}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={s}
-                    alt={`${projectName} Sketch ${i + 1}`}
-                    className="w-full h-full object-cover grayscale sepia(0.2) opacity-60"
-                  />
-                  <div className="absolute inset-0 bg-black/10 pointer-events-none" />
-                </div>
-              ))}
+
+            <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_2.5fr] gap-12 md:gap-20 items-center">
+              <div className="flex flex-col gap-6">
+                <div className="w-12 h-px bg-brand/40" />
+                <h4 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
+                  The Genesis of the Mark
+                </h4>
+                <p className="text-zinc-400 leading-relaxed text-lg max-w-sm">
+                  Every brand identity begins with the raw translation of
+                  thoughts to paper. This phase is about unregulated
+                  experimentation—exploring the intersection of the
+                  project&apos;s core mission and its ultimate visual form.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 md:gap-10">
+                {sketches.slice(0, 4).map((s, i) => (
+                  <div
+                    key={i}
+                    className={`relative aspect-[3/4] rounded-lg overflow-hidden bg-zinc-900 border border-zinc-800 transition-all duration-700 shadow-2xl ${
+                      i % 2 === 0
+                        ? "rotate-1 md:rotate-2 md:translate-y-4"
+                        : "-rotate-1 md:-rotate-2 md:-translate-y-4"
+                    }`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={s}
+                      alt={`${projectName} Sketch ${i + 1}`}
+                      className="w-full h-full object-cover grayscale sepia(0.2) opacity-60"
+                    />
+                    <div className="absolute inset-0 bg-black/10 pointer-events-none" />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -559,18 +615,69 @@ function ProcessSequence({
 
         {/* 04. Final Mark */}
         {finalMark && (
-          <div className="flex-shrink-0 w-full md:w-screen h-auto md:h-full flex flex-col items-center justify-center bg-zinc-950 px-6 py-20 md:py-0">
-            <span className="font-mono text-[11px] tracking-[0.3em] text-brand uppercase mb-12">
+          <div className="flex-shrink-0 w-full md:w-screen h-auto md:h-full flex flex-col items-center justify-center bg-zinc-950 px-6 py-20 md:py-0 relative overflow-hidden">
+            {/* Background ambient glow */}
+            <div className="absolute inset-0 bg-brand/5 blur-[120px] rounded-full scale-150 animate-pulse pointer-events-none" />
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-px bg-gradient-to-r from-transparent via-brand/30 to-transparent" />
+
+            <span className="font-mono text-[11px] tracking-[0.3em] text-brand uppercase mb-16 relative z-10">
               04 — The Conclusion
             </span>
-            <div className="relative w-full max-w-lg aspect-square flex items-center justify-center p-12 md:p-20">
-              <div className="absolute inset-0 bg-brand/5 rounded-full blur-[120px] animate-pulse" />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={finalMark}
-                alt={`${projectName} Final Mark`}
-                className="relative z-10 w-full h-auto object-contain drop-shadow-[0_0_40px_rgba(93,69,253,0.3)]"
-              />
+
+            <div className="relative z-10 flex flex-col lg:flex-row items-center gap-16 lg:gap-24 max-w-5xl w-full">
+              {/* Mark */}
+              <div className="relative w-56 md:w-72 aspect-square flex-shrink-0 flex items-center justify-center">
+                <div className="absolute inset-0 bg-brand/10 rounded-full blur-[80px] animate-pulse" />
+                <div className="absolute inset-4 rounded-full border border-brand/10" />
+                <div className="absolute inset-8 rounded-full border border-brand/5" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={finalMark}
+                  alt={`${projectName} Final Mark`}
+                  className="relative z-10 w-full h-auto object-contain drop-shadow-[0_0_40px_rgba(93,69,253,0.3)]"
+                />
+              </div>
+
+              {/* Text + CTA */}
+              <div className="flex flex-col items-center lg:items-start gap-8 text-center lg:text-left">
+                {conclusion && (
+                  <>
+                    <div className="w-8 h-px bg-brand/40" />
+                    <p className="text-zinc-300 leading-relaxed text-base md:text-lg max-w-sm italic">
+                      &quot;{conclusion}&quot;
+                    </p>
+                  </>
+                )}
+
+                {/* CTA */}
+                {liveUrl && (
+                  <a
+                    href={liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group mt-2 inline-flex items-center gap-3 px-6 py-3 rounded-full border border-brand/30 bg-brand/5 hover:bg-brand/10 hover:border-brand/60 transition-all duration-300"
+                  >
+                    <span className="font-mono text-xs uppercase tracking-[0.2em] text-brand">
+                      View Live Site
+                    </span>
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 14 14"
+                      fill="none"
+                      className="text-brand group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200"
+                    >
+                      <path
+                        d="M2 12L12 2M12 2H5M12 2V9"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -773,18 +880,18 @@ export function ProjectLayout({ project }: { project: Project }) {
     const refresh = () => {
       ScrollTrigger.refresh();
     };
-    
+
     // Multiple pings to catch images, fonts, and MindMap layout
     const t1 = setTimeout(refresh, 100);
     const t2 = setTimeout(refresh, 1000);
     const t3 = setTimeout(refresh, 3000);
-    
-    window.addEventListener('load', refresh);
+
+    window.addEventListener("load", refresh);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t3);
-      window.removeEventListener('load', refresh);
+      window.removeEventListener("load", refresh);
     };
   }, []);
 
@@ -1103,14 +1210,13 @@ export function ProjectLayout({ project }: { project: Project }) {
         finalMark={assets.logo}
         projectName={name}
         mindMap={assets.mindMap}
+        conclusion={assets.conclusions}
+        liveUrl={assets.liveUrl}
       />
 
       {/* ── Gallery ───────────────────────────────────────────────────── */}
       {hasGallery && (
         <section className="bg-zinc-950 border-t border-zinc-800 py-20 md:py-28 px-6 md:px-20">
-          <span className="font-mono text-[11px] tracking-[0.2em] text-zinc-600 uppercase block mb-12">
-            Process &amp; Work
-          </span>
           {gallerySections.map((cat) => (
             <GallerySection
               key={cat.label}

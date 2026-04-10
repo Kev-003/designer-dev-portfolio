@@ -115,12 +115,12 @@ export function LogoTicker() {
 
   return (
     <div
-      className="border-y border-zinc-200 dark:border-zinc-800 w-full flex pl-30 items-center h-[120px] relative overflow-hidden"
+      className="border-y border-zinc-200 dark:border-zinc-800 w-full flex pl-30 items-center h-[120px] relative overflow-hidden z-30"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       {/* Static label */}
-      <div className="hidden md:flex flex-col justify-center bg-white dark:bg-[#0a0a0a] z-10 pr-8 h-full shrink-0">
+      <div className="hidden lg:flex flex-col justify-center bg-background z-10 pr-8 h-full shrink-0">
         <p className="font-mono uppercase text-[10px] tracking-widest leading-relaxed text-zinc-500 font-semibold whitespace-nowrap">
           Collaborating with
           <br />
@@ -129,7 +129,7 @@ export function LogoTicker() {
       </div>
 
       {/* Scrolling marquee */}
-      <div className="flex-1 relative flex items-center h-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_15%,black)]">
+      <div className="flex-1 relative flex items-center h-full overflow-display lg:overflow-hidden lg:[mask-image:linear-gradient(to_right,transparent,black_15%,black)]">
         <div
           ref={trackRef}
           className="flex items-center w-max will-change-transform"

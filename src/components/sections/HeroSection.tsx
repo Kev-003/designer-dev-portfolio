@@ -1,85 +1,142 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { useTheme } from 'next-themes';
-import { LogoTicker } from '@/components/sections/LogoTicker';
+import React, { useState, useEffect, useRef } from "react";
+import { useTheme } from "next-themes";
+import { LogoTicker } from "@/components/sections/LogoTicker";
+import { IsometricSwitcher } from "@/components/ui/hero/IsometricSwitcher";
+import gsap from "gsap";
+
+const HEADLINES = {
+  experience: { text: "Architecting the story." },
+  engineering: { text: "Engineering the reality." },
+};
 
 // Simplified MorphHeadline
-function MorphHeadline({ mode }: { mode: 'experience' | 'engineering' }) {
-    return (
-        <h1 className={`text-4xl md:text-6xl font-extrabold tracking-tight transition-all duration-500 ${mode === 'experience' ? 'text-brand' : 'text-white'}`}>
-            {mode === 'experience' ? 'Architecting the story.' : 'Engineering the reality.'}
-        </h1>
-    );
+function MorphHeadline({ mode }: { mode: "experience" | "engineering" }) {
+  const hlRef = useRef<HTMLHeadingElement>(null);
+  const currentMode = useRef(mode);
+  const busy = useRef(false);
+
+  // Seed words on first mount
+  useEffect(() => {
+    const el = hlRef.current;
+    if (!el) return;
+    el.innerHTML = wordSpans(HEADLINES[mode].text);
+    gsap.set(el.querySelectorAll(".word"), { opacity: 1, y: 0 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Animate on mode change
+  useEffect(() => {
+    const el = hlRef.current;
+    if (!el || currentMode.current === mode || busy.current) return;
+
+    busy.current = true;
+    currentMode.current = mode;
+    const oldWords = el.querySelectorAll<HTMLElement>(".word");
+    const { text } = HEADLINES[mode];
+
+    gsap.to(oldWords, {
+      y: -32,
+      opacity: 0,
+      duration: 0.22,
+      stagger: 0.04,
+      ease: "power2.in",
+      onComplete() {
+        el.innerHTML = wordSpans(text);
+        const newWords = el.querySelectorAll<HTMLElement>(".word");
+        gsap.fromTo(
+          newWords,
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.35,
+            stagger: 0.055,
+            ease: "back.out(1.4)",
+            onComplete() {
+              busy.current = false;
+            },
+          },
+        );
+      },
+    });
+  }, [mode]);
+
+  return (
+    <h1
+      ref={hlRef}
+      className={`text-4xl md:text-6xl font-extrabold tracking-tight text-balance overflow-hidden
+        transition-colors duration-300 pb-5
+        ${mode === "experience" ? "text-brand" : "text-white"}`}
+    />
+  );
 }
 
-// Sleek Mobile-Friendly Sliding Toggle
-function SlidingToggle({ activeMode, onChange }: { activeMode: 'experience' | 'engineering', onChange: (v: 'experience' | 'engineering') => void }) {
-    return (
-        <div className="relative flex items-center bg-zinc-100 dark:bg-zinc-900 rounded-full p-1 shadow-inner border border-zinc-200 dark:border-zinc-800">
-            {/* Sliding Background Pill */}
-            <div 
-                className="absolute w-1/2 h-[calc(100%-8px)] rounded-full bg-white dark:bg-zinc-800 shadow-sm transition-transform duration-300 ease-out"
-                style={{ transform: activeMode === 'experience' ? 'translateX(0%)' : 'translateX(100%)' }}
-            />
-            
-            <button
-                onClick={() => onChange('experience')}
-                className={`relative z-10 w-32 md:w-40 py-2 text-xs md:text-sm font-semibold tracking-wide transition-colors duration-300 ${activeMode === 'experience' ? 'text-black dark:text-white' : 'text-zinc-500 hover:text-black dark:hover:text-white'}`}
-            >
-                The Experience
-            </button>
-            <button
-                onClick={() => onChange('engineering')}
-                className={`relative z-10 w-32 md:w-40 py-2 text-xs md:text-sm font-semibold tracking-wide transition-colors duration-300 ${activeMode === 'engineering' ? 'text-black dark:text-white' : 'text-zinc-500 hover:text-black dark:hover:text-white'}`}
-            >
-                The Engine
-            </button>
-        </div>
-    );
+function wordSpans(text: string) {
+  return text
+    .split(" ")
+    .map(
+      (w) =>
+        `<span class="word inline-block mr-[0.22em] will-change-transform">${w}</span>`,
+    )
+    .join("");
 }
 
 type Props = {
-    mode?: 'experience' | 'engineering';
-    onModeChange?: (mode: 'experience' | 'engineering') => void;
-}
-
-const DESCRIPTIONS = {
-    experience: "I don't just design interfaces; I architect how people feel and flow through a narrative. My deepest expertise lies in heavy interaction design and high-stakes visual storytelling.",
-    engineering: "I write the expressive, resilient code that makes deep interactions possible. From precise custom animations to scalable systems, I bring the craft of purposeful design into the logic of development.",
+  mode?: "experience" | "engineering";
+  onModeChange?: (mode: "experience" | "engineering") => void;
 };
 
-export function HeroSection({ mode = 'experience', onModeChange }: Props) {
-    const [activeMode, setActiveMode] = useState<'experience' | 'engineering'>(mode);
-    const { setTheme } = useTheme();
+const DESCRIPTIONS = {
+  experience:
+    "I don't just design interfaces; I architect how people feel and flow through a narrative. My deepest expertise lies in heavy interaction design and high-stakes visual storytelling.",
+  engineering:
+    "I write the expressive, resilient code that makes deep interactions possible. From precise custom animations to scalable systems, I bring the craft of purposeful design into the logic of development.",
+};
 
-    // Ensure theme matches initial mode on mount
-    useEffect(() => {
-        setTheme(mode === 'experience' ? 'light' : 'dark');
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+export function HeroSection({ mode = "experience", onModeChange }: Props) {
+  const [activeMode, setActiveMode] = useState<"experience" | "engineering">(
+    mode,
+  );
+  const { setTheme } = useTheme();
 
-    const handleModeChange = (value: 'experience' | 'engineering') => {
-        setActiveMode(value);
-        setTheme(value === 'experience' ? 'light' : 'dark');
-        onModeChange?.(value);
-    };
+  // Ensure theme matches initial mode on mount
+  useEffect(() => {
+    setTheme(mode === "experience" ? "light" : "dark");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    return (
-        <div className="h-[95dvh] flex flex-col pb-12">
-            <div className="flex-1 space-y-4 px-6 md:px-12 max-w-4xl mx-auto flex flex-col justify-center">
-                <div className="flex items-center">
-                    <SlidingToggle activeMode={activeMode} onChange={handleModeChange} />
-                </div>
+  const handleModeChange = (value: "experience" | "engineering") => {
+    setActiveMode(value);
+    setTheme(value === "experience" ? "light" : "dark");
+    onModeChange?.(value);
+  };
 
-                <MorphHeadline mode={activeMode} />
-
-                <p className={`max-w-xl text-lg md:text-xl leading-relaxed ${activeMode === 'experience' ? 'text-foreground opacity-90' : 'text-zinc-400'}`}>
-                    {DESCRIPTIONS[activeMode]}
-                </p>
-            </div>
-
-            <LogoTicker />
+  return (
+    <div className="min-h-[95dvh] flex flex-col pt-24 md:pt-0 pb-12 overflow-hidden">
+      <div className="flex-1 px-6 md:px-12 max-w-6xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-start md:justify-center gap-6 md:gap-30 pb-10">
+        {/* Isometric Switcher Container - Left aligned on mobile, right on desktop */}
+        <div className="relative z-40 flex items-start mr-0 lg:-mr-20 justify-start order-1 md:order-2 overflow-visible pointer-events-auto origin-left scale-65 sm:scale-75 md:scale-100 lg:scale-110">
+          <IsometricSwitcher
+            activeMode={activeMode}
+            onChange={handleModeChange}
+          />
         </div>
-    );
+
+        {/* Text Content */}
+        <div className="flex flex-col order-2 md:order-1 flex-1 text-left ml-0 lg:-ml-100 mr-20">
+          <MorphHeadline mode={activeMode} />
+
+          <p
+            className={`mt-4 max-w-xl text-lg md:text-xl leading-relaxed ${activeMode === "experience" ? "text-foreground opacity-90" : "text-zinc-400"} mr-20`}
+          >
+            {DESCRIPTIONS[activeMode]}
+          </p>
+        </div>
+      </div>
+
+      <LogoTicker />
+    </div>
+  );
 }
