@@ -1,13 +1,27 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useLayoutEffect,
+} from "react";
 import Link from "next/link";
-import { X, ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
+import {
+  X,
+  ChevronLeft,
+  ChevronRight,
+  ArrowLeft,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { Project } from "@/lib/projects";
 import { ProjectTag } from "@/components/ui/ProjectTag";
+import { MindMap } from "../ui/MindMap";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -245,6 +259,326 @@ function MetaChip({
   );
 }
 
+// ─── Brand Identity Components ────────────────────────────────────────────────
+
+function BrandAssetCard({
+  src,
+  label,
+  type,
+  projectName,
+}: {
+  src: string;
+  label: string;
+  type: string;
+  projectName: string;
+}) {
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  return (
+    <div className="group flex flex-col gap-4">
+      <div
+        className={`relative aspect-square rounded-xl transition-all duration-500 transform group-hover:-translate-y-2 group-hover:shadow-2xl flex flex-col overflow-hidden border ${
+          theme === "dark"
+            ? "bg-zinc-900 border-zinc-800 shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
+            : "bg-white border-zinc-200 shadow-[0_20px_40px_rgba(0,0,0,0.1)]"
+        }`}
+      >
+        {/* Theme Toggle Overlay */}
+        <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-black/20 backdrop-blur-md p-1 rounded-full border border-white/10">
+          <button
+            onClick={() => setTheme("light")}
+            className={`w-5 h-5 rounded-full border border-white/20 transition-all ${
+              theme === "light" ? "bg-white scale-110" : "bg-white/40"
+            }`}
+          />
+          <button
+            onClick={() => setTheme("dark")}
+            className={`w-5 h-5 rounded-full border border-white/20 transition-all ${
+              theme === "dark" ? "bg-zinc-900 scale-110" : "bg-zinc-900/40"
+            }`}
+          />
+        </div>
+
+        {/* Asset Display */}
+        <div className="flex-1 flex items-center justify-center p-12 overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={src}
+            alt={`${projectName} ${label}`}
+            className={`max-h-full max-w-full object-contain transition-transform duration-700 group-hover:scale-110 ${
+              theme === "light" ? "brightness-100" : ""
+            }`}
+          />
+        </div>
+
+        {/* Download Hint */}
+        <div className="absolute bottom-4 left-0 right-0 text-center translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+          <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-[0.2em]">
+            Click to View Full
+          </span>
+        </div>
+      </div>
+
+      <div className="flex justify-between items-end px-1">
+        <div className="flex flex-col">
+          <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest leading-none mb-1">
+            {label}
+          </span>
+          <span className="text-[9px] text-zinc-600 font-medium uppercase tracking-wider italic">
+            {type}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ColorPalette({ colors }: { colors: string[] }) {
+  return (
+    <div className="mt-20 pt-12 border-t border-zinc-900">
+      <span className="font-mono text-[11px] tracking-[0.2em] text-zinc-600 uppercase block mb-10">
+        Color Palette
+      </span>
+      <div className="flex w-full h-32 rounded-xl overflow-hidden shadow-2xl border border-zinc-800/50 group">
+        {colors.map((color, i) => (
+          <div
+            key={i}
+            className="group relative flex-1 hover:flex-[1.5] transition-all duration-500 ease-out"
+            style={{ backgroundColor: color }}
+          >
+            <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 backdrop-blur-md">
+              <span className="font-mono text-[10px] text-white uppercase tracking-widest">
+                {color}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TypographySpecimen({
+  family,
+  weights,
+  usage,
+}: {
+  family: string;
+  weights: string[];
+  usage?: string;
+}) {
+  return (
+    <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 group">
+      <div className="flex flex-col">
+        <span className="text-zinc-500 font-mono text-[10px] uppercase tracking-[0.3em] mb-4">
+          {usage ?? "Font Family"}
+        </span>
+        <h3 className="text-5xl md:text-7xl font-bold tracking-tighter text-white group-hover:text-brand transition-colors duration-500">
+          {family}
+        </h3>
+      </div>
+
+      <div className="flex-1 flex flex-col md:items-end">
+        <div
+          className="text-[100px] md:text-[140px] leading-none font-bold text-zinc-800/20 mb-4 select-none group-hover:text-zinc-800/40 transition-colors duration-700 whitespace-nowrap"
+          style={{ fontFamily: family }}
+        >
+          AaBbCc
+        </div>
+        <div className="flex flex-wrap gap-4 md:justify-end">
+          {weights.map((w) => (
+            <span
+              key={w}
+              className="font-mono text-[10px] text-zinc-400 uppercase tracking-widest px-3 py-1 border border-zinc-800 rounded-full group-hover:border-zinc-700 transition-colors"
+            >
+              {w}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProcessSequence({
+  sketches,
+  vectorization,
+  finalMark,
+  projectName,
+  mindMap,
+}: {
+  sketches?: string[];
+  vectorization?: string[];
+  finalMark?: string;
+  projectName: string;
+  mindMap?: { nodes: string };
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (
+      typeof window === "undefined" ||
+      !containerRef.current ||
+      !trackRef.current
+    )
+      return;
+
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
+
+      mm.add("(min-width: 800px)", () => {
+        const track = trackRef.current;
+        const container = containerRef.current;
+        if (!track || !container) return;
+
+        const getScrollWidth = () => track.scrollWidth - window.innerWidth;
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: container,
+            pin: true,
+            start: "top top",
+            // Use a generous multi-screen scroll distance
+            end: () => `+=${track.scrollWidth}`, 
+            scrub: 1,
+            invalidateOnRefresh: true,
+            anticipatePin: 1,
+            pinSpacing: true,
+            onUpdate: (self) => {
+              if (progressRef.current) {
+                gsap.set(progressRef.current, { scaleX: self.progress });
+              }
+            },
+          },
+        });
+
+        tl.to(track, {
+          x: () => -(track.scrollWidth - window.innerWidth),
+          ease: "none",
+        });
+
+        // Force a refresh once the timeline is set
+        ScrollTrigger.refresh();
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, [sketches, vectorization, finalMark, mindMap]);
+
+  if (!sketches?.length && !vectorization?.length && !finalMark && !mindMap)
+    return null;
+
+  return (
+    <section
+      ref={containerRef}
+      className="relative bg-zinc-950 overflow-hidden border-t border-zinc-900"
+    >
+      {/* Progress bar */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-zinc-900 z-50 hidden md:block">
+        <div
+          ref={progressRef}
+          className="h-full bg-brand origin-left scale-x-0"
+        />
+      </div>
+
+      <div
+        ref={trackRef}
+        className="flex flex-col md:flex-row h-auto md:h-screen items-center"
+      >
+        {/* 1.1. Sketches */}
+        {sketches && sketches.length > 0 && (
+          <div className="flex-shrink-0 w-full md:w-screen h-auto md:h-full flex flex-col justify-center px-6 md:px-20 py-20 md:py-0 bg-zinc-950 border-b md:border-b-0 md:border-r border-zinc-900">
+            <span className="font-mono text-[11px] tracking-[0.3em] text-zinc-600 uppercase mb-12">
+              01 — Ideation &amp; Sketches
+            </span>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+              {sketches.slice(0, 4).map((s, i) => (
+                <div
+                  key={i}
+                  className={`relative aspect-[3/4] rounded-lg overflow-hidden bg-zinc-900 border border-zinc-800 transition-all duration-700 shadow-2xl ${
+                    i % 2 === 0
+                      ? "rotate-1 md:rotate-2 md:translate-y-4"
+                      : "-rotate-1 md:-rotate-2 md:-translate-y-4"
+                  }`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={s}
+                    alt={`${projectName} Sketch ${i + 1}`}
+                    className="w-full h-full object-cover grayscale sepia(0.2) opacity-60"
+                  />
+                  <div className="absolute inset-0 bg-black/10 pointer-events-none" />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 02. Mind Map */}
+        {mindMap && (
+          <div className="flex-shrink-0 w-full md:w-screen h-auto md:h-full flex flex-col justify-center px-6 md:px-20 py-20 md:py-0 bg-zinc-950 border-b md:border-b-0 md:border-r border-zinc-900">
+            <span className="font-mono text-[11px] tracking-[0.3em] text-zinc-600 uppercase mb-12">
+              02 — Conceptualization
+            </span>
+            <div className="w-full max-w-5xl mx-auto">
+              <MindMap dsl={mindMap.nodes} />
+            </div>
+          </div>
+        )}
+
+        {/* 03. Vectorization */}
+        {vectorization && vectorization.length > 0 && (
+          <div className="flex-shrink-0 w-full md:w-screen h-auto md:h-full flex flex-col justify-center px-6 md:px-20 py-20 md:py-0 bg-zinc-900/30 backdrop-blur-sm border-b md:border-b-0 md:border-r border-zinc-900">
+            <span className="font-mono text-[11px] tracking-[0.3em] text-zinc-600 uppercase mb-12">
+              03 — Refinement &amp; Vectorization
+            </span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div className="relative aspect-video rounded-2xl overflow-hidden border border-zinc-800 p-10">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={vectorization[0]}
+                  alt={`${projectName} Vectorization`}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="flex flex-col gap-6">
+                <h4 className="text-3xl font-bold text-white tracking-tight">
+                  From Rough to Refined
+                </h4>
+                <p className="text-zinc-400 leading-relaxed text-lg max-w-md">
+                  Transitioning conceptual sketches into a clean, geometric
+                  framework. This phase focuses on precision, balance, and
+                  scalability.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 04. Final Mark */}
+        {finalMark && (
+          <div className="flex-shrink-0 w-full md:w-screen h-auto md:h-full flex flex-col items-center justify-center bg-zinc-950 px-6 py-20 md:py-0">
+            <span className="font-mono text-[11px] tracking-[0.3em] text-brand uppercase mb-12">
+              04 — The Conclusion
+            </span>
+            <div className="relative w-full max-w-lg aspect-square flex items-center justify-center p-12 md:p-20">
+              <div className="absolute inset-0 bg-brand/5 rounded-full blur-[120px] animate-pulse" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={finalMark}
+                alt={`${projectName} Final Mark`}
+                className="relative z-10 w-full h-auto object-contain drop-shadow-[0_0_40px_rgba(93,69,253,0.3)]"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
 /**
  * RevealText: Animates words from gray to white based on scroll position.
  * - Desktop: Animated word-by-word via ScrollTrigger.
@@ -328,13 +662,82 @@ export function ProjectLayout({ project }: { project: Project }) {
     keywords,
     tools,
     technologies,
+    brandColors,
+    brandColor,
+    typography,
     assets,
   } = project;
 
   const heroRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const lottieOverlayRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
   const [lightbox, setLightbox] = useState<LightboxState>(null);
+  const [isMuted, setIsMuted] = useState(true);
+  const MAX_VOLUME = 0.6; // Cap volume as requested
+
+  // Dynamic Font Loading
+  useEffect(() => {
+    if (!typography) return;
+
+    const styleId = `fonts-${project.slug}`;
+    let styleTag = document.getElementById(styleId) as HTMLStyleElement;
+    if (!styleTag) {
+      styleTag = document.createElement("style");
+      styleTag.id = styleId;
+      document.head.appendChild(styleTag);
+    }
+
+    const css = typography
+      .filter((t) => t.fontFile)
+      .map((t) => {
+        const ext = t.fontFile!.split(".").pop()?.toLowerCase();
+        const format =
+          ext === "otf" ? "opentype" : ext === "ttf" ? "truetype" : ext;
+        return `
+          @font-face {
+            font-family: '${t.fontFamily}';
+            src: url('${t.fontFile}') format('${format}');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+          }
+        `;
+      })
+      .join("\n");
+
+    styleTag.textContent = css;
+
+    return () => {
+      // We keep the fonts loaded to prevent flicker when returning,
+      // but they are scoped by id if needed.
+    };
+  }, [typography, project.slug]);
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      const newMuted = !isMuted;
+      videoRef.current.muted = newMuted;
+      videoRef.current.volume = MAX_VOLUME;
+      setIsMuted(newMuted);
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cursorRef.current) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    gsap.to(cursorRef.current, {
+      x,
+      y,
+      duration: 0.2,
+      ease: "power2.out",
+      overwrite: "auto",
+    });
+  };
 
   // Hero entrance
   useEffect(() => {
@@ -365,6 +768,26 @@ export function ProjectLayout({ project }: { project: Project }) {
     return () => ctx.revert();
   }, []);
 
+  // Global refresh after everything is rendered — critical for pinning
+  useLayoutEffect(() => {
+    const refresh = () => {
+      ScrollTrigger.refresh();
+    };
+    
+    // Multiple pings to catch images, fonts, and MindMap layout
+    const t1 = setTimeout(refresh, 100);
+    const t2 = setTimeout(refresh, 1000);
+    const t3 = setTimeout(refresh, 3000);
+    
+    window.addEventListener('load', refresh);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      window.removeEventListener('load', refresh);
+    };
+  }, []);
+
   const openLightbox = (images: string[], category: string, index: number) =>
     setLightbox({ images, category, index });
 
@@ -381,12 +804,18 @@ export function ProjectLayout({ project }: { project: Project }) {
   const gallerySections: GalleryItem[] = (
     [
       { label: "Final Work", images: assets.mockups ?? [] },
-      { label: "Sketches", images: assets.sketches ?? [] },
-      { label: "Vectorization", images: assets.vectorization ?? [] },
+      {
+        label: "Alternative Sketches",
+        images: (assets.sketches ?? []).slice(4),
+      },
+      {
+        label: "Detailed Vectorization",
+        images: (assets.vectorization ?? []).slice(1),
+      },
       { label: "System Architecture", images: assets.erd ?? [] },
       { label: "Documentation", images: assets.documentation ?? [] },
       { label: "Code & Snippets", images: assets.snippets ?? [] },
-      { label: "Other", images: assets.extras ?? [] },
+      { label: "Other Assets", images: assets.extras ?? [] },
     ] as GalleryItem[]
   ).filter((s) => s.images.length > 0);
 
@@ -394,7 +823,7 @@ export function ProjectLayout({ project }: { project: Project }) {
   const hasMeta = !!(tools?.length || technologies?.length || keywords?.length);
 
   return (
-    <>
+    <main className="bg-zinc-950 min-h-screen overflow-x-hidden relative">
       {/* ── Hero ──────────────────────────────────────────────────────── */}
       <div
         ref={heroRef}
@@ -530,42 +959,151 @@ export function ProjectLayout({ project }: { project: Project }) {
             </div>
           )}
         </div>
+      </section>
 
-        {/* Brand asset row (logo / logotype / icon) */}
-        {(assets.logo || assets.logotype || assets.icon) && (
-          <div className="mt-16 pt-12 border-t border-zinc-800">
-            <span className="font-mono text-[11px] tracking-[0.2em] text-zinc-600 uppercase block mb-8">
-              Brand Assets
-            </span>
-            <div className="flex flex-wrap gap-8 items-center">
-              {[
-                { src: assets.logo, label: "Mark" },
-                { src: assets.logotype, label: "Wordmark" },
-                { src: assets.icon, label: "Icon" },
-              ]
-                .filter((a) => a.src)
-                .map((a) => (
+      {/* ── Showcase ──────────────────────────────────────────────────── */}
+      {assets.showcase && (
+        <section className="bg-zinc-950 border-t border-zinc-800 py-20 md:py-28 px-6 md:px-20 overflow-hidden">
+          <div className="w-full flex flex-col gap-4">
+            {/* Primary Highlight */}
+            <div
+              className="w-full md:w-[75vw] items-center justify-center mx-auto aspect-video rounded-xl overflow-hidden bg-zinc-900/50 border border-zinc-800 relative group cursor-none"
+              onClick={toggleMute}
+              onMouseMove={handleMouseMove}
+            >
+              {assets.showcase.highlight.type === "video" ? (
+                <>
+                  <video
+                    ref={videoRef}
+                    src={assets.showcase.highlight.url}
+                    autoPlay
+                    loop
+                    muted={isMuted}
+                    playsInline
+                    className="w-full h-full object-cover pointer-events-none"
+                  />
+
+                  {/* Custom Cursor Prompt */}
                   <div
-                    key={a.label}
-                    className="flex flex-col items-center gap-3"
+                    ref={cursorRef}
+                    className="absolute top-0 left-0 z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    style={{ transform: "translate(-50%, -50%)" }}
                   >
-                    <div className="bg-zinc-900 rounded-lg p-6 flex items-center justify-center">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={a.src!}
-                        alt={`${name} ${a.label}`}
-                        className="h-16 w-auto"
-                      />
+                    <div className="bg-zinc-950/80 backdrop-blur-md border border-white/5 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-2 shadow-2xl">
+                      {isMuted ? (
+                        <VolumeX size={14} className="text-zinc-400" />
+                      ) : (
+                        <Volume2 size={14} className="text-brand" />
+                      )}
+                      <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-100">
+                        {isMuted
+                          ? "Click to enable audio"
+                          : "Audio Active (60%)"}
+                      </span>
                     </div>
-                    <span className="font-mono text-[10px] text-zinc-600 uppercase tracking-widest">
-                      {a.label}
-                    </span>
                   </div>
-                ))}
+                </>
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={assets.showcase.highlight.url}
+                  alt={`${name} Highlight`}
+                  className="w-full h-full object-cover"
+                />
+              )}
             </div>
           </div>
-        )}
-      </section>
+        </section>
+      )}
+
+      {/* ── Full Webpage Capture ───────────────────────────────────────── */}
+      {assets.fullPage && (
+        <section
+          className="py-20 md:py-32 border-t border-zinc-900/30"
+          style={{ backgroundColor: brandColor }}
+        >
+          <div className="max-w-6xl mx-auto px-6 overflow-hidden">
+            <div className="rounded-2xl overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={assets.fullPage}
+                alt={`${name} Full Webpage Capture`}
+                className="w-full h-auto block"
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── Brand Identity Section ───────────────────────────────────── */}
+      {(assets.logo ||
+        assets.logotype ||
+        assets.icon ||
+        brandColors ||
+        typography) && (
+        <section className="bg-zinc-950 border-t border-zinc-800 py-20 px-6 md:px-20">
+          {/* Asset Cards */}
+          {(assets.logo || assets.logotype || assets.icon) && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+              {assets.logo && (
+                <BrandAssetCard
+                  src={assets.logo}
+                  label="Logomark"
+                  type="Symbolic Icon"
+                  projectName={name}
+                />
+              )}
+              {assets.logotype && (
+                <BrandAssetCard
+                  src={assets.logotype}
+                  label="Wordmark"
+                  type="Full Logotype"
+                  projectName={name}
+                />
+              )}
+              {assets.icon && (
+                <BrandAssetCard
+                  src={assets.icon}
+                  label="App Icon"
+                  type="Simplified Mark"
+                  projectName={name}
+                />
+              )}
+            </div>
+          )}
+
+          {/* Colors */}
+          {brandColors && <ColorPalette colors={brandColors} />}
+
+          {/* Typography */}
+          {typography && (
+            <div className="mt-20 pt-12 border-t border-zinc-900 mb-20">
+              <span className="font-mono text-[11px] tracking-[0.2em] text-zinc-600 uppercase block mb-12">
+                Typography
+              </span>
+              <div className="flex flex-col gap-24">
+                {typography.map((spec, i) => (
+                  <TypographySpecimen
+                    key={i}
+                    family={spec.fontFamily}
+                    weights={spec.weights}
+                    usage={spec.usage}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* ── Process ─────────────────────────────────────────────────── */}
+      <ProcessSequence
+        sketches={assets.sketches}
+        vectorization={assets.vectorization}
+        finalMark={assets.logo}
+        projectName={name}
+        mindMap={assets.mindMap}
+      />
 
       {/* ── Gallery ───────────────────────────────────────────────────── */}
       {hasGallery && (
@@ -592,6 +1130,6 @@ export function ProjectLayout({ project }: { project: Project }) {
           onNavigate={navigateLightbox}
         />
       )}
-    </>
+    </main>
   );
 }

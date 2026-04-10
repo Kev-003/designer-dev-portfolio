@@ -29,6 +29,8 @@ export type ProjectAssets = {
   snippets?: string[];
   /** Anything that doesn't fit the categories above */
   extras?: string[];
+  /** Long-scrolling full webpage capture */
+  fullPage?: string;
   /** Media showcase in the expanded project row */
   showcase?: {
     /** Primary media, usually a video spanning the largest space */
@@ -38,6 +40,9 @@ export type ProjectAssets = {
     };
     /** 2 supporting images to display alongside the highlight */
     images: [string, string];
+  };
+  mindMap?: {
+    nodes: string;  // a mini DSL string
   };
 };
 
@@ -61,6 +66,16 @@ export type Project = {
   technologies?: string[];
   /** Primary brand color hex (used for UI themes) */
   brandColor: string;
+  /** Secondary brand Colors */
+  brandColors?: string[];
+  /** Typography specimens */
+  typography?: {
+    fontFamily: string;
+    weights: string[];
+    usage?: string; // e.g. "Brand Logotype" or "User Interface"
+    fontFile?: string; // e.g. "/fonts/august-bold.woff2"
+  }[];
+  
   assets: ProjectAssets;
 };
 
@@ -79,6 +94,20 @@ export const PROJECTS: Project[] = [
     keywords: ["Realtime Monitoring", "Cost Optimization", "Sustainability", "IoT", "Clean Energy"],
     tools: ["Figma", "Adobe Illustrator", "Adobe Photoshop"],
     brandColor: "#e8a216",
+    brandColors: ["#e8a216", "#131313", "#EAEAEA", "#D7D6D6"],
+    typography: [
+      {
+        fontFamily: "August Bold",
+        weights: ["Bold"],
+        usage: "Brand Logotype",
+        fontFile: "/projects/courant/fonts/august-bold.ttf",
+      },
+      {
+        fontFamily: "Helvetica",
+        weights: ["Regular", "Medium", "Bold"],
+        usage: "Product Interface",
+      },
+    ],
     assets: {
       cover: "/projects/courant/cover.jpg",
       logo: "/projects/courant/logo.svg",
@@ -86,8 +115,8 @@ export const PROJECTS: Project[] = [
       icon: "/projects/courant/icon.svg",
       animation: "/projects/courant/logo-animation.json",
       mockups: [],
-      sketches: [],
-      vectorization: [],
+      sketches: ["/projects/courant/sketches.webp"],
+      vectorization: ["/projects/courant/icon-comp.svg"],
       showcase: {
       highlight: {
         type: "video",
@@ -98,6 +127,32 @@ export const PROJECTS: Project[] = [
         "/projects/courant/showcase-2.jpg",
       ],
     },
+    mindMap: {
+      nodes: `
+        Courant
+          Electricity
+            Lightbulb
+            Socket
+            I/O
+          Safety
+            Rounded Edges
+          Maintenance
+            Repair
+              Yellow
+          Power
+            Sustainability
+            Lightning
+              Bolt
+          Current
+        Electricity > Power
+        Electricity > Safety
+        Electricity > Maintenance
+        Power > Current
+        Lightning > Bolt
+        Repair > Yellow
+      `
+    },
+    fullPage: "/projects/courant/full-site.webp",
     },
       
   },

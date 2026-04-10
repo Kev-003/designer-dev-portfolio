@@ -47,7 +47,8 @@ export default function AboutPage() {
     },
     {
       role: "Web Developer & Digital Ops",
-      company: "Northeastern Property Mgmt",
+      company:
+        "Northeastern Property Management Solutions / Rymer Realty Group",
       year: "2025",
       desc: "Designed high-conversion landing pages and managed CRM lead capture workflows to streamline client inquiries and operations.",
     },
@@ -65,7 +66,8 @@ export default function AboutPage() {
     },
     {
       role: "Creative Director / Multimedia",
-      company: "Various Organizations (SSITE, RGB)",
+      company:
+        "Various Organizations (SSITE, CCST Digital Arts, Church So Blessed)",
       year: "2023 - Present",
       desc: "Led design teams and directed continuous event visuals, motion graphics, and social media content to boost organizational community engagement.",
     },
