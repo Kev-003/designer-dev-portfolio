@@ -3,115 +3,117 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { BrandNavLinks, type BrandNavLinkItem } from "@/components/layout/brand-nav-links";
-import { BrandNavFooter, BrandNavToggle } from "@/components/layout/brand-nav-extras";
+import {
+  BrandNavLinks,
+  type BrandNavLinkItem,
+} from "@/components/layout/brand-nav-links";
+import {
+  BrandNavFooter,
+  BrandNavToggle,
+} from "@/components/layout/brand-nav-extras";
 import { useBrandNavAnimation } from "@/hooks/use-brand-nav-animation";
 import { useBrandNavTyping } from "@/hooks/use-brand-nav-typing";
 import { cn } from "@/lib/utils";
 
 const navItems: BrandNavLinkItem[] = [
-    { label: "about me.", href: "/about" },
-    { label: "projects.", href: "/projects" },
-    { label: "services.", href: "/services" },
+  { label: "about me.", href: "/about" },
+  { label: "projects.", href: "/projects" },
+  { label: "lab.", href: "/lab" },
 ];
 
 export function BrandNav() {
-    const [isOpen, setIsOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
-    const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
-    // Close menu when route changes
-    useEffect(() => {
-        setIsOpen(false);
-    }, [pathname]);
-    
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
-        };
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
-    
-    const label = useBrandNavTyping({
-        isActive: isOpen,
-        activeText: "close",
-        inactiveText: "menu",
-    });
+  // Close menu when route changes
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
-    const { overlayRef, menuItemsRef, socialsRef } = useBrandNavAnimation({
-        isOpen,
-    });
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-    const handleClose = () => setIsOpen(false);
+  const label = useBrandNavTyping({
+    isActive: isOpen,
+    activeText: "close",
+    inactiveText: "menu",
+  });
 
-    useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = "hidden";
-        } else {
-            document.body.style.overflow = "";
-        }
-        return () => {
-            document.body.style.overflow = "";
-        };
-    }, [isOpen]);
+  const { overlayRef, menuItemsRef, socialsRef } = useBrandNavAnimation({
+    isOpen,
+  });
 
-    return (
-        <div className="z-50">
-            <div 
-                className={cn(
-                    "fixed top-6 right-6 transition-all duration-500 ease-in-out z-[60]",
-                    scrolled && !isOpen
-                        ? "bg-black/40 backdrop-blur-xl border border-white/10 rounded-full py-1.5 px-3 shadow-2xl scale-95 origin-right" 
-                        : "bg-transparent py-2 px-4"
-                )}
+  const handleClose = () => setIsOpen(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  return (
+    <div className="z-50">
+      <div
+        className={cn(
+          "fixed top-6 right-6 transition-all duration-500 ease-in-out z-[60]",
+          scrolled && !isOpen
+            ? "bg-black/40 backdrop-blur-xl border border-white/10 rounded-full py-1.5 px-3 shadow-2xl scale-95 origin-right"
+            : "bg-transparent py-2 px-4",
+        )}
+      >
+        <BrandNavToggle
+          label={label}
+          className={cn(
+            "relative transition-all duration-300 translate-y-px text-brand dark:text-white",
+          )}
+          onClick={() => setIsOpen((prev) => !prev)}
+        />
+      </div>
+
+      <div
+        ref={overlayRef}
+        className={cn(
+          "fixed inset-0 z-40 flex h-screen flex-col justify-between overflow-y-auto bg-white/95 dark:bg-black/95 backdrop-blur-lg p-5 text-brand dark:text-white md:p-10 font-sans opacity-0 invisible pointer-events-none",
+          isOpen && "pointer-events-auto",
+        )}
+        aria-hidden={isOpen ? "false" : "true"}
+      >
+        <div className="flex items-start justify-start">
+          <Link href="/" onClick={handleClose} className="text-3xl font-bold">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 542.24 896.49"
+              className="select-none scale-70 md:scale-100 h-[30px] md:h-[40px] w-auto text-brand dark:text-white transition-colors duration-300"
             >
-                <BrandNavToggle
-                    label={label}
-                    className={cn(
-                        "relative transition-all duration-300 translate-y-px text-brand dark:text-white"
-                    )}
-                    onClick={() => setIsOpen((prev) => !prev)}
-                />
-            </div>
-
-            <div
-                ref={overlayRef}
-                className={cn(
-                    "fixed inset-0 z-40 flex h-screen flex-col justify-between overflow-y-auto bg-white/95 dark:bg-black/95 backdrop-blur-lg p-5 text-brand dark:text-white md:p-10 font-sans opacity-0 invisible pointer-events-none",
-                    isOpen && "pointer-events-auto"
-                )}
-                aria-hidden={isOpen ? "false" : "true"}
-            >
-                <div className="flex items-start justify-start">
-                    <Link
-                        href="/"
-                        onClick={handleClose}
-                        className="text-3xl font-bold"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 542.24 896.49"
-                            className="select-none scale-70 md:scale-100 h-[30px] md:h-[40px] w-auto text-brand dark:text-white transition-colors duration-300"
-                        >
-                            <path
-                                fill="currentColor"
-                                d="M529.4,0a402.07,402.07,0,0,1-26.83,65.05q-2,3.95-4.15,7.89-5.4,10-11.4,20-6.21,10.34-13,20.57l-.22.33q-6,9-12.55,17.94a564.82,564.82,0,0,1-115.11,117Q329.8,261,312.55,272.05l-.31.19a475.65,475.65,0,0,1-75,39.15q-18.08,7.46-36.72,13.21l-.11,0Q189,328.16,177.3,331V64.34l-.36.07-3.29.64a449.21,449.21,0,0,1-50.57,6.75l-.28,0-.82.06h0q-9.6.74-19.32,1.06-6.87.24-13.81.25-8.75,0-17.39-.25t-17.19-.88h0q-14.73-1-29.17-3l-.12,0q-12.56-1.68-24.88-4H0V412.26q3.38.14,6.75.23,10.85.33,21.79.28h.54q7.72,0,15.41-.28c3.24-.09,6.48-.21,9.7-.37h0a618.5,618.5,0,0,0,68.57-6.79l.23,0q27.36-4.25,53.91-10.78l.31-.07c2.27-.56,4.52-1.13,6.77-1.72A550.38,550.38,0,0,0,237.25,376a534.94,534.94,0,0,0,57.86-25.36,547.48,547.48,0,0,0,51-29.58c52-34,98.31-76.44,140.92-125.52v86l-.28.28c-24.53,25.41-50.12,48.4-78.1,68.77q-6,4.33-12,8.51l-3.12,2.11a487.81,487.81,0,0,1-47.38,28.17q-13.46,7-27.71,13.33l-1.54.69q-10.64,4.68-21.75,9-9.84,3.81-20.11,7.34-17.53,6-36.39,11.2l-1.34.37v33.7q19.5,5.32,37.62,11.56,9.53,3.27,18.7,6.79,13.15,5.06,25.63,10.6l1.19.54q13.2,5.88,25.68,12.35a487.26,487.26,0,0,1,63,38.83q13.19,9.56,25.63,19.9l2.24,1.86A585.37,585.37,0,0,1,487,615l.05,0v85.84l-.05-.06c-42.64-49.1-88.92-91.51-140.92-125.49a547.58,547.58,0,0,0-50.87-29.52,535.29,535.29,0,0,0-58-25.43,552.8,552.8,0,0,0-53-16.65c-2.31-.6-4.62-1.19-6.95-1.76l-.33-.08q-26.52-6.51-53.89-10.76l-.25,0a626.52,626.52,0,0,0-68.57-6.8h0q-18.07-.79-36.36-.56c-1.83,0-3.68.05-5.51.12L0,484.74v353.8A461.55,461.55,0,0,1,47.28,832l.63,0q3.15-.27,6.31-.48h0q10.59-.78,21.31-1c1.82,0,3.64-.08,5.46-.1q8.44-.1,16.84.09h.35q12.39.28,24.61,1.24l.23,0a459.61,459.61,0,0,1,52.22,7.07l1.69.33.31.06V565.41q8.88,2.13,17.64,4.63l.12,0a434.44,434.44,0,0,1,42.24,14.49A479.79,479.79,0,0,1,346.1,646.18a535.88,535.88,0,0,1,86.32,81.25c.86,1,1.71,2,2.55,3q16.71,19.9,31.32,41.12,9.79,14.21,18.57,28.89c.73,1.21,1.44,2.43,2.16,3.65h0c.64,1.09,1.27,2.18,1.9,3.27q6.61,11.45,12.59,23.11,2.12,4.14,4.16,8.33a477.88,477.88,0,0,1,22,52.79.76.76,0,0,1,0,.11q.84,2.38,1.63,4.77h12.8V577.22l-.51-.45c-12.38-10.51-25-20.85-38.09-31q-8.15-6.32-16.55-12.54-15.78-11.67-32.64-23l-1.54-1q-2.71-1.82-5.46-3.61l-3.08-2-.24-.15q-15.71-10.17-32.61-20-17.37-10.09-36.23-19.84l-5.92-3-.21-.1q-3.07-1.56-6.16-3.09-8.35-4.15-16.83-8.12l-2.2-1h0l2.22-1c24.27-11.19,46.42-22.77,67-34.72A772.22,772.22,0,0,0,487,363.56q6.24-4.65,12.33-9.36l.45-.35q2.06-1.58,4.08-3.17c12.9-10.09,25.37-20.39,37.66-30.89l.7-.6V0ZM102.77,131.59q10-.32,20-1l.32,0V343.1h0l-.3,0q-25.18,4.32-51.1,6.41l-.42,0q-8.48.68-17,1.09V130.82q12.84.81,25.84,1,4.5.06,9,0c1.43,0,2.85,0,4.28,0q3.85,0,7.71-.15ZM80.31,771.74q-13.11.18-26.07,1v-227q8.71.42,17.37,1.11c.13,0,.25,0,.36,0q25.74,2.05,50.83,6.38l.28.05,0,218.22V773l-.3,0Q101.76,771.48,80.31,771.74Z"
-                            />
-                        </svg>
-                    </Link>
-                </div>
-
-                <div className="flex-1 flex flex-col justify-end md:justify-center">
-                    <BrandNavLinks
-                        items={navItems}
-                        onSelect={handleClose}
-                        containerRef={menuItemsRef}
-                    />
-                </div>
-
-                <BrandNavFooter containerRef={socialsRef} />
-            </div>
+              <path
+                fill="currentColor"
+                d="M529.4,0a402.07,402.07,0,0,1-26.83,65.05q-2,3.95-4.15,7.89-5.4,10-11.4,20-6.21,10.34-13,20.57l-.22.33q-6,9-12.55,17.94a564.82,564.82,0,0,1-115.11,117Q329.8,261,312.55,272.05l-.31.19a475.65,475.65,0,0,1-75,39.15q-18.08,7.46-36.72,13.21l-.11,0Q189,328.16,177.3,331V64.34l-.36.07-3.29.64a449.21,449.21,0,0,1-50.57,6.75l-.28,0-.82.06h0q-9.6.74-19.32,1.06-6.87.24-13.81.25-8.75,0-17.39-.25t-17.19-.88h0q-14.73-1-29.17-3l-.12,0q-12.56-1.68-24.88-4H0V412.26q3.38.14,6.75.23,10.85.33,21.79.28h.54q7.72,0,15.41-.28c3.24-.09,6.48-.21,9.7-.37h0a618.5,618.5,0,0,0,68.57-6.79l.23,0q27.36-4.25,53.91-10.78l.31-.07c2.27-.56,4.52-1.13,6.77-1.72A550.38,550.38,0,0,0,237.25,376a534.94,534.94,0,0,0,57.86-25.36,547.48,547.48,0,0,0,51-29.58c52-34,98.31-76.44,140.92-125.52v86l-.28.28c-24.53,25.41-50.12,48.4-78.1,68.77q-6,4.33-12,8.51l-3.12,2.11a487.81,487.81,0,0,1-47.38,28.17q-13.46,7-27.71,13.33l-1.54.69q-10.64,4.68-21.75,9-9.84,3.81-20.11,7.34-17.53,6-36.39,11.2l-1.34.37v33.7q19.5,5.32,37.62,11.56,9.53,3.27,18.7,6.79,13.15,5.06,25.63,10.6l1.19.54q13.2,5.88,25.68,12.35a487.26,487.26,0,0,1,63,38.83q13.19,9.56,25.63,19.9l2.24,1.86A585.37,585.37,0,0,1,487,615l.05,0v85.84l-.05-.06c-42.64-49.1-88.92-91.51-140.92-125.49a547.58,547.58,0,0,0-50.87-29.52,535.29,535.29,0,0,0-58-25.43,552.8,552.8,0,0,0-53-16.65c-2.31-.6-4.62-1.19-6.95-1.76l-.33-.08q-26.52-6.51-53.89-10.76l-.25,0a626.52,626.52,0,0,0-68.57-6.8h0q-18.07-.79-36.36-.56c-1.83,0-3.68.05-5.51.12L0,484.74v353.8A461.55,461.55,0,0,1,47.28,832l.63,0q3.15-.27,6.31-.48h0q10.59-.78,21.31-1c1.82,0,3.64-.08,5.46-.1q8.44-.1,16.84.09h.35q12.39.28,24.61,1.24l.23,0a459.61,459.61,0,0,1,52.22,7.07l1.69.33.31.06V565.41q8.88,2.13,17.64,4.63l.12,0a434.44,434.44,0,0,1,42.24,14.49A479.79,479.79,0,0,1,346.1,646.18a535.88,535.88,0,0,1,86.32,81.25c.86,1,1.71,2,2.55,3q16.71,19.9,31.32,41.12,9.79,14.21,18.57,28.89c.73,1.21,1.44,2.43,2.16,3.65h0c.64,1.09,1.27,2.18,1.9,3.27q6.61,11.45,12.59,23.11,2.12,4.14,4.16,8.33a477.88,477.88,0,0,1,22,52.79.76.76,0,0,1,0,.11q.84,2.38,1.63,4.77h12.8V577.22l-.51-.45c-12.38-10.51-25-20.85-38.09-31q-8.15-6.32-16.55-12.54-15.78-11.67-32.64-23l-1.54-1q-2.71-1.82-5.46-3.61l-3.08-2-.24-.15q-15.71-10.17-32.61-20-17.37-10.09-36.23-19.84l-5.92-3-.21-.1q-3.07-1.56-6.16-3.09-8.35-4.15-16.83-8.12l-2.2-1h0l2.22-1c24.27-11.19,46.42-22.77,67-34.72A772.22,772.22,0,0,0,487,363.56q6.24-4.65,12.33-9.36l.45-.35q2.06-1.58,4.08-3.17c12.9-10.09,25.37-20.39,37.66-30.89l.7-.6V0ZM102.77,131.59q10-.32,20-1l.32,0V343.1h0l-.3,0q-25.18,4.32-51.1,6.41l-.42,0q-8.48.68-17,1.09V130.82q12.84.81,25.84,1,4.5.06,9,0c1.43,0,2.85,0,4.28,0q3.85,0,7.71-.15ZM80.31,771.74q-13.11.18-26.07,1v-227q8.71.42,17.37,1.11c.13,0,.25,0,.36,0q25.74,2.05,50.83,6.38l.28.05,0,218.22V773l-.3,0Q101.76,771.48,80.31,771.74Z"
+              />
+            </svg>
+          </Link>
         </div>
-    );
+
+        <div className="flex-1 flex flex-col justify-end md:justify-center">
+          <BrandNavLinks
+            items={navItems}
+            onSelect={handleClose}
+            containerRef={menuItemsRef}
+          />
+        </div>
+
+        <BrandNavFooter containerRef={socialsRef} />
+      </div>
+    </div>
+  );
 }
