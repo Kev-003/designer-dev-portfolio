@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   Volume2,
   VolumeX,
+  ArrowUpRight,
 } from "lucide-react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import gsap from "gsap";
@@ -187,6 +188,50 @@ function Lightbox({
         )}
       </div>
     </div>
+  );
+}
+
+// ─── Documentation Section ──────────────────────────────────────────────────
+
+function DocumentationSection({
+  docs,
+}: {
+  docs: NonNullable<Project["assets"]["mdxDocs"]>;
+}) {
+  return (
+    <section className="bg-zinc-950 border-t border-zinc-800 py-20 px-6 md:px-20">
+      <div className="mb-12">
+        <span className="font-mono text-[11px] tracking-[0.2em] text-zinc-600 uppercase block mb-4">
+          Documentation
+        </span>
+        <h2 className="text-3xl md:text-5xl font-extrabold text-zinc-100 tracking-tight">
+          Read the Docs
+        </h2>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {docs.map((doc, i) => (
+          <Link
+            key={i}
+            href={doc.url}
+            className="group block p-6 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-brand/50 hover:bg-zinc-900/80 transition-all duration-300"
+          >
+            <div className="flex justify-between items-start mb-4">
+              <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest">
+                0{i + 1}
+              </span>
+              <ArrowUpRight size={16} className="text-zinc-600 group-hover:text-brand transition-colors group-hover:translate-x-1 group-hover:-translate-y-1" />
+            </div>
+            <h3 className="text-lg font-bold text-zinc-200 mb-2 group-hover:text-white transition-colors">
+              {doc.title}
+            </h3>
+            <p className="text-sm text-zinc-500 leading-relaxed line-clamp-2">
+              {doc.description}
+            </p>
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -1212,6 +1257,11 @@ export function ProjectLayout({ project }: { project: Project }) {
         conclusion={assets.conclusions}
         liveUrl={assets.liveUrl}
       />
+
+      {/* ── MDX Documentation ─────────────────────────────────────────── */}
+      {assets.mdxDocs && assets.mdxDocs.length > 0 && (
+        <DocumentationSection docs={assets.mdxDocs} />
+      )}
 
       {/* ── Gallery ───────────────────────────────────────────────────── */}
       {hasGallery && (

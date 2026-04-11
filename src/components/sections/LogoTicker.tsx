@@ -115,7 +115,7 @@ export function LogoTicker() {
 
   return (
     <div
-      className="border-y border-zinc-200 dark:border-zinc-800 w-full flex pl-30 items-center h-[120px] relative overflow-hidden z-30"
+      className="bg-background border-y border-zinc-200 dark:border-zinc-800 w-full flex pl-30 items-center h-[120px] relative overflow-hidden z-50"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
