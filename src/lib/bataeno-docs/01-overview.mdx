@@ -1,0 +1,68 @@
+---
+title: "Project Overview"
+description: "Bataeño Pass — Barangay-Level Implementation"
+slug: "overview"
+order: 1
+---
+
+# Bataeño Pass — Barangay Module
+
+**Organization:** Provincial Government of Bataan — PITO
+**Internship Period:** February 2 – March 10, 2026 (6 weeks)
+**ERD Reference:** [dbdiagram.io/d/ERDBrgy](https://dbdiagram.io/d/ERDBrgy-697aaeb0bd82f5fce2f3aac1)
+
+---
+
+## What This System Does
+
+The **Barangay Module** is a vertical extension of the existing Bataeño Pass provincial identity platform. It brings government document services — certificates, clearances, residency records — down to the barangay level across Bataan province.
+
+Residents authenticate once through the eGovPH SSO and gain access to:
+
+- Digital document requests (no barangay hall visits required)
+- Household registration and residency management
+- Real-time status notifications for pending documents
+
+Barangay officials get:
+
+- A structured request queue with signing authority enforcement
+- NFC-assisted walk-in processing
+- Automatic term expiry and delegation management
+
+---
+
+## Scope
+
+The system serves **three access tiers**:
+
+| Role | What They Can Do | Where They Access It |
+|---|---|---|
+| **Residents** | Request documents, manage household, view lineage | Livewire resident portal |
+| **Barangay Officials** | Approve/reject requests, issue signed PDFs, manage residents | Official Filament panel |
+| **City/Municipal Admins** | Read-only view across all barangays in their municipality | City Admin Filament panel (`/city-admin`) |
+| **Super Admin** | Global access, bypasses tenancy guard | All panels |
+
+---
+
+## Technology Stack
+
+| Layer | Technology |
+|---|---|
+| Backend Framework | Laravel (PHP) |
+| Resident UI | Laravel Livewire |
+| Admin Panels | Filament PHP |
+| Authentication | eGovPH / Bataeño Pass SSO (OAuth 2.0) |
+| Roles & Permissions | Spatie Laravel Permission |
+| Real-Time | Laravel Reverb (WebSockets) |
+| PDF Generation | Spatie Browsershot + Puppeteer |
+| Lineage Visualization | D3.js + Alpine.js |
+| Queue Processing | Laravel Queue (database driver) |
+| Debugging | Laravel Telescope |
+| Local Dev | OrbStack |
+| Physical Card Support | NFC (PhilID QR & NFC tap) |
+
+---
+
+## Non-Functional Requirements
+
+The system complies with the **Data Privacy Act of 2012 (RA 10173)**. All personal data is access-controlled by role and barangay scope. The system is designed for high availability with the exception of scheduled maintenance windows, and is compatible with common web browsers on both desktop and mobile devices.
