@@ -1,0 +1,295 @@
+---
+title: "Database Design"
+description: "38-table schema across 8 functional groups with design rationale"
+slug: "database"
+order: 4
+---
+
+# Database Design
+
+The system contains **38 tables** organized into **8 functional groups**. All tables use integer primary keys except where noted. Timestamps (`created_at`, `updated_at`) are present on all tables.
+
+---
+
+## Schema Overview
+
+| Group | Tables | Purpose |
+|---|---|---|
+| Core Location | 2 | Geographic hierarchy (municipality → barangay) |
+| Users & Authentication | 3 | Resident and official identity |
+| Roles & Permissions | 5 | Spatie RBAC tables |
+| Barangay Governance | 2 | Official terms and signing delegations |
+| Housing & Households | 5 | Physical structures, economic units, member profiles |
+| Document System | 4 | Transaction lifecycle and requirements |
+| Document Detail Tables | 10 | Type-specific document fields |
+| System & Infrastructure | 6 | Queue, notifications, Telescope |
+
+---
+
+## Core Location
+
+### `municipalities`
+
+Top-level geographic unit. Links barangays to their city or municipality.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | BIGINT PK | |
+| municity_code | VARCHAR(20) | eGovPH standard code. Used for external API linking |
+| name | VARCHAR(255) | Unique |
+| district | INT | Legislative district number |
+| zip_code | VARCHAR(4) | |
+
+### `barangays`
+
+Primary jurisdictional unit. All residents, households, officials, and transactions are scoped to a barangay.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | BIGINT PK | |
+| barangay_code | VARCHAR(20) | eGovPH code. Retained for external API after migration |
+| municity_code | VARCHAR(20) → municipalities.id | Integer FK post-migration |
+| province_code | VARCHAR(20) | |
+| region_code | VARCHAR(20) | e.g., Region III – Central Luzon |
+| name | VARCHAR(255) | |
+
+> **Design note:** The field is named `municity_code` but stores an integer FK after the barangay ID migration. The eGovPH code string is preserved separately for external API calls.
+
+---
+
+## Users & Authentication
+
+### `users` (29 columns)
+
+Central identity record for all residents and officials on the platform. Implements Filament multi-tenancy via `barangay_id` and `municity_id`. Supports soft deletes.
+
+**Key fields:**
+
+| Column | Type | Notes |
+|---|---|---|
+| id | BIGINT PK | |
+| uuid | VARCHAR(255) | From eGovPH. Unique. Used for external API identity |
+| family_id | BIGINT → families.id | Nullable. NULL on family deletion |
+| mother_id / father_id | VARCHAR → users.id | Self-referencing. Nullable |
+| barangay_id | BIGINT → barangays.id | Primary jurisdictional link |
+| municity_id | BIGINT → municipalities.id | Municipality link |
+| egov_data | JSON | Raw eGovPH payload (IDs, PhilHealth, UMID, passport) |
+| digital_signature | TEXT | Path to official's signature image |
+| deleted_at | TIMESTAMP | Soft delete |
+
+### `password_reset_tokens`
+
+Laravel built-in. `email` (PK), `token` (hashed), `created_at`.
+
+### `personal_access_tokens`
+
+Laravel Sanctum. 10 columns. Polymorphic token ownership with `abilities`, `last_used_at`, `expires_at`.
+
+---
+
+## Roles & Permissions (Spatie)
+
+Standard Spatie Laravel Permission tables. Five tables total:
+
+| Table | Purpose |
+|---|---|
+| `permissions` | Granular permissions, guard-scoped |
+| `roles` | Role definitions (Captain, Secretary, Kagawad, Admin, Super Admin) |
+| `model_has_roles` | Polymorphic role assignments |
+| `model_has_permissions` | Direct per-model permission overrides |
+| `role_has_permissions` | Role → permission mapping |
+
+Permission cache is invalidated on every role assignment or revocation via `PermissionRegistrar::forgetCachedPermissions()`.
+
+---
+
+## Barangay Governance
+
+### `barangay_terms` (8 columns)
+
+One row = one official's tenure in one position at one barangay. The authorization middleware checks this table on every document signing attempt.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | BIGINT PK | |
+| user_id | BIGINT → users.id | |
+| barangay_id | BIGINT → barangays.id | |
+| position_id | BIGINT → roles.id | RESTRICT on delete |
+| started_at | TIMESTAMP | Defaults to current timestamp |
+| ended_at | TIMESTAMP | **NULL = currently active** |
+
+On term creation, the user is automatically assigned the corresponding Spatie role.
+
+### `delegations` (6 columns)
+
+Records a signing authority grant from a Captain to another official.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | BIGINT PK | |
+| granter_term_id | BIGINT → barangay_terms.id | The Captain's term |
+| delegate_term_id | BIGINT → barangay_terms.id | The delegate's term |
+| expires_at | TIMESTAMP | NULL = no expiry |
+
+All delegations are automatically voided when the granting Captain's `barangay_terms.ended_at` is populated.
+
+---
+
+## Housing & Households
+
+### `houses` (7 columns)
+
+Physical dwelling unit. Foundational jurisdictional anchor — a household's `barangay_id` flows from its house.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | BIGINT PK | |
+| barangay_id | BIGINT → barangays.id | Enforces jurisdictional locking |
+| housing_unit | VARCHAR(255) | Unit/lot number |
+| street | VARCHAR(255) | |
+| subdivision | VARCHAR(255) | Nullable |
+
+### `households` (9 columns)
+
+Economic/social unit within a house. Multiple households can occupy one house (e.g., extended family + boarders).
+
+| Column | Type | Notes |
+|---|---|---|
+| id | BIGINT PK | |
+| house_id | BIGINT → houses.id | CASCADE on delete |
+| household_head_id | BIGINT | Refs `household_member_profiles.id`. **No FK constraint** (circular dep) |
+| ownership | VARCHAR(255) | Owned, Rented, etc. |
+| monthly_utility_expense | DECIMAL(10,2) | |
+| total_income | DECIMAL(12,2) | |
+| expires_at | TIMESTAMP | Household dissolution timestamp. NULL = active |
+
+> **Design note:** `household_head_id` has no database-level FK to avoid a circular dependency between `households` and `household_member_profiles`. Head assignment is managed at the application layer.
+
+### `household_member_profiles` (12 columns)
+
+Junction table linking a user to a household with role, presence, and tenure metadata.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | BIGINT PK | |
+| user_id | BIGINT → users.id | CASCADE |
+| household_id | BIGINT → households.id | CASCADE |
+| role | VARCHAR(255) | Head, Spouse, Member |
+| membership_type | VARCHAR(255) | primary_resident, transient, associate |
+| presence_status | VARCHAR(255) | Present, OFW, Deceased |
+| monthly_income | DECIMAL(10,2) | |
+| started_at | TIMESTAMP | |
+| ended_at | TIMESTAMP | NULL = currently active |
+
+**Partial unique indexes:**
+
+```sql
+-- Prevents double-dipping for social services
+CREATE UNIQUE INDEX idx_unique_active_primary_resident
+ON household_member_profile (user_id)
+WHERE presence_status = 'Primary' AND end_date IS NULL;
+
+-- Ensures each household has exactly one active Head
+CREATE UNIQUE INDEX idx_single_active_household_head
+ON household_member_profile (household_id)
+WHERE role = 'Head' AND end_date IS NULL;
+```
+
+### `families` (8 columns)
+
+Nuclear family unit. Managed automatically by `UserObserver`. Linked to `father_id`, `mother_id`, `barangay_id`, and optionally a `household_id`.
+
+### `residency_requests` (16 columns)
+
+Temporary holding record for pending residency applications. Drives the household linking workflow on official approval.
+
+| Column | Notes |
+|---|---|
+| household_id | **NULL** = request to create a new household. Populated = request to join existing |
+| role | Requested household role (defaults to "Head") |
+| membership_type | Defaults to "Primary" |
+| status | Pending / Approved / Rejected / Cancelled |
+| approver_id → users.id | Official who took action |
+| actioned_at | Timestamp of approval/rejection |
+
+---
+
+## Document System
+
+### `document_type_properties` (9 columns)
+
+Master catalog of all supported document types.
+
+| Column | Notes |
+|---|---|
+| code | Short unique code, e.g., `BRGY_CLR` |
+| doc_type_model | PHP model class name for polymorphic detail routing |
+| validity_days | Drives `expiry_date` calculation. NULL = no expiry |
+| default_fee | Defaults to 0.00 |
+
+### `document_transactions` (18 columns)
+
+Central record for every document request or issuance. The full lifecycle is tracked here.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | BIGINT PK | |
+| approver_id | BIGINT → **barangay_terms.id** | Term record, not user ID (legally accurate audit) |
+| on_behalf_of | BIGINT → barangay_terms.id | Signing on behalf of (delegation) |
+| document_type_id | BIGINT → document_type_properties.id | |
+| signing_capacity | VARCHAR | `Native` or `Acting` |
+| status | VARCHAR | pending / issued / rejected |
+| request_origin | VARCHAR | `online` or `walk-in` |
+| requester_id | BIGINT → users.id | **Nullable** — NULL for walk-in requests |
+| barangay_id | BIGINT → barangays.id | Jurisdictional scope |
+| checksum | CHAR(64) | SHA-256 hash for tamper detection. Unique |
+| download_token | VARCHAR | One-time token. Refreshed on each download |
+| file_path | VARCHAR | Path to generated PDF |
+
+> **Design decision:** `approver_id` references `barangay_terms.id` rather than `users.id`. This creates a legally defensible audit trail — even years later, the system can answer exactly who was legally authorized to sign a document and in what capacity.
+
+### `transaction_requirements` (8 columns)
+
+Stores actual supporting documents submitted per transaction.
+
+| Column | Notes |
+|---|---|
+| transaction_id → document_transactions.id | CASCADE |
+| requirement_id → document_requirements_definitions.id | |
+| value_text | Text value (e.g., CTC number) |
+| file_path | Uploaded file path |
+| is_verified | Boolean. Defaults to FALSE |
+
+---
+
+## Document Detail Tables
+
+Each document type has a dedicated satellite table linked 1-to-1 with `document_transactions` via `transaction_id`. These tables store only the fields unique to that type.
+
+| Table | Key Fields |
+|---|---|
+| `clearances` | `community_tax_id` |
+| `business_clearances` | `business_name`, `business_type`, `ownership`, `services`, `location` |
+| `construction_clearances` | `location` |
+| `tricycle_clearances` | `new_owner_id`, `requested_for_id`, `purpose`, `body_number` |
+| `jobseeker_certificates` | (no additional fields; all data from transaction) |
+| `guardianship_certificates` | `guardian_id`, `relationship`, `address_id → barangays` |
+| `indigency_certificates` | `requested_for`, `purpose` |
+| `indigencysps_certificates` | `father`, `mother`, `address_id → barangays` |
+| `residency_certificates` | `requested_for`, `length_of_residence` |
+| `solo_parent_certificates` | `solo_parent_name`, `no_of_child`, `address_id → barangays` |
+
+`DocumentTransaction::getSpecificDetails()` resolves the correct detail record dynamically using the `doc_type_model` field on `document_type_properties`.
+
+---
+
+## System & Infrastructure
+
+| Table | Purpose |
+|---|---|
+| `notifications` | Laravel built-in database notifications (UUID PK) |
+| `jobs` | Laravel Queue pending jobs |
+| `failed_jobs` | Jobs that exhausted all retries (full stack trace stored) |
+| `telescope_entries` | Requests, queries, jobs, exceptions (added Week 6) |
+| `telescope_entries_tags` | Tag-based filtering (e.g., `Auth:1`, `App\Models\User:1`) |
+| `telescope_monitoring` | Actively monitored tags |
