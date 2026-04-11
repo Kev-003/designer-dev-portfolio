@@ -254,13 +254,12 @@ function GallerySection({
             <button
               key={i}
               onClick={() => onOpen(i)}
-              className="group relative aspect-[4/3] overflow-hidden rounded-lg bg-zinc-900 focus-visible:ring-2 focus-visible:ring-brand"
+              className="group relative overflow-hidden rounded-lg bg-zinc-900 focus-visible:ring-2 focus-visible:ring-brand"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={src}
                 alt={`${label} ${i + 1}`}
-                className="w-full h-full object-cover absolute inset-0 transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-auto block transition-transform duration-500 group-hover:scale-105"
                 draggable={false}
               />
               <div className="absolute inset-0 flex items-end p-3 bg-black/0 group-hover:bg-black/40 transition-colors duration-300">

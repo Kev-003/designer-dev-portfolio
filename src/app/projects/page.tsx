@@ -18,27 +18,34 @@ function ProjectRow({ project }: { project: Project }) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
-  useGSAP(() => {
-    if (!containerRef.current || !contentRef.current) return;
+  useGSAP(
+    () => {
+      if (!containerRef.current || !contentRef.current) return;
 
-    // Background transition
-    gsap.to(containerRef.current, {
-      backgroundColor: isHovered ? project.brandColor : "transparent",
-      duration: 0.4,
-      ease: "power2.out",
-      overwrite: true
-    });
+      // Background transition
+      gsap.to(containerRef.current, {
+        backgroundColor: isHovered ? project.brandColor : "transparent",
+        duration: 0.4,
+        ease: "power2.out",
+        overwrite: true,
+      });
 
-    // Height and Opacity transition
-    gsap.to(contentRef.current, {
-      height: isHovered ? "auto" : 0,
-      opacity: isHovered ? 1 : 0,
-      marginTop: isHovered ? (window.innerWidth >= 768 ? 32 : 24) : 0,
-      duration: 0.5,
-      ease: isHovered ? "power3.out" : "power3.inOut",
-      overwrite: true
-    });
-  }, { dependencies: [isHovered, project.brandColor], scope: containerRef, revertOnUpdate: false });
+      // Height and Opacity transition
+      gsap.to(contentRef.current, {
+        height: isHovered ? "auto" : 0,
+        opacity: isHovered ? 1 : 0,
+        marginTop: isHovered ? (window.innerWidth >= 768 ? 32 : 24) : 0,
+        duration: 0.5,
+        ease: isHovered ? "power3.out" : "power3.inOut",
+        overwrite: true,
+      });
+    },
+    {
+      dependencies: [isHovered, project.brandColor],
+      scope: containerRef,
+      revertOnUpdate: false,
+    },
+  );
 
   return (
     <Link
@@ -74,11 +81,12 @@ function ProjectRow({ project }: { project: Project }) {
         className="relative z-10 overflow-hidden mt-0 opacity-0 h-0"
       >
         <div className="flex flex-col gap-8 items-start justify-between w-full">
-          <div className="max-w-full flex lg:mt-auto">
+          <div className="max-w-full flex flex-col gap-4 lg:mt-auto">
             <p className="text-xl md:text-2xl font-medium leading-snug text-white/90">
               {project.mission}
             </p>
-            <div className="flex flex-wrap gap-2 mt-6 justify-end">
+            <div className="w-full h-px bg-white/10" />
+            <div className="flex flex-wrap gap-2">
               {project.tags.map((tag) => (
                 <ProjectTag
                   key={tag}

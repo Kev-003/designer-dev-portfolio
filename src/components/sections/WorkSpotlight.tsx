@@ -295,7 +295,7 @@ export function WorkSpotlight() {
         onMouseLeave={handleMouseUp}
         onClickCapture={handleClickCapture}
       >
-        {PROJECTS.map((project) => (
+        {PROJECTS.filter((p) => p.isSpotlight).map((project) => (
           <ProjectCard key={project.slug} project={project} />
         ))}
 

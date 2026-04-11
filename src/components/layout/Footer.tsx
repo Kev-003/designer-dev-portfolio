@@ -3,6 +3,7 @@
 import React from "react";
 import { ArrowUpRight } from "lucide-react";
 import gsap from "gsap";
+import Link from "next/link";
 
 export function Footer() {
   const onCard1Hover = (e: React.MouseEvent) => {
@@ -44,9 +45,10 @@ export function Footer() {
   return (
     <footer className="relative z-10 grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5 px-5 md:pl-24 md:pr-10 py-10 mt-auto">
       {/* First Card */}
-      <div
+      <Link
         onMouseEnter={onCard1Hover}
         onMouseLeave={onCard1Leave}
+        href="/projects"
         className="relative cursor-pointer col-span-1 bg-black dark:bg-white text-white dark:text-black border flex flex-col justify-between px-4 py-6 md:px-6 md:py-8 rounded-xl md:rounded-2xl min-h-[220px] md:min-h-[400px]"
       >
         <div>
@@ -68,7 +70,7 @@ export function Footer() {
             className="flex-shrink-0 md:w-6 md:h-6"
           />
         </div>
-      </div>
+      </Link>
 
       {/* Second Card */}
       <div

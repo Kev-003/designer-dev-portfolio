@@ -79,6 +79,7 @@ export type Project = {
     fontFile?: string; // e.g. "/fonts/august-bold.woff2"
   }[];
   
+  isSpotlight?: boolean;
   assets: ProjectAssets;
 };
 
@@ -166,7 +167,7 @@ export const PROJECTS: Project[] = [
     conclusions: "MSMEs don't have facilities teams — they need a system that speaks plainly and responds before damage is done. Courant's identity was built around that contract. The mark distills the project's core tensions: technical precision softened by rounded, approachable forms. Yellow surfaces only where it matters — anomaly alerts, repair states, critical thresholds — doing organizational work across multiple devices rather than purely decorative. The goal was to make Isolation Forest and LLM-driven anomaly detection feel like a calm, confident assistant. Not a dashboard. Not a warning system. Just clarity, exactly when you need it.",
     liveUrl: "https://courant.energy",
     },
-      
+    isSpotlight: true,  
   },
   {
     slug: "bataeno-pass",
@@ -190,6 +191,7 @@ export const PROJECTS: Project[] = [
       documentation: [],
       snippets: [],
     },
+    isSpotlight: true,
   },
   {
     slug: "edmer-software",
@@ -214,6 +216,7 @@ export const PROJECTS: Project[] = [
       sketches: [],
       vectorization: [],
     },
+    isSpotlight: true,
   },
   {
     slug: "strawberry-sweets",
@@ -236,7 +239,110 @@ export const PROJECTS: Project[] = [
       mockups: [],
       fullPage: "/projects/strawberry-sweets/full-site.webp",
       liveUrl: "https://strawberry-sweets-music.cc",
+      showcase: {
+        highlight: {
+          type: "image",
+          url: "/projects/strawberry-sweets/cover.webp",
+        },
+        images: [
+          "/projects/strawberry-sweets/showcase-1.webp",
+          "/projects/strawberry-sweets/showcase-2.webp",
+        ],
+      },
     },
     
+  },
+  {
+    slug: "imbento",
+    name: "Imbento",
+    year: "2025",
+    mission:
+      "Inventing a brand identity as playful and original as the concept itself.",
+    description:
+      "Imbento — rooted in the Filipino spirit of invention — needed a visual identity that lived up to its name. The lettermark was built from scratch: no single typeface, just shapes, custom tweaks, and dynamic forms that give the wordmark a personality flexible enough to stretch across every surface. The packaging system balances clean structure with room for pattern and storytelling, turning every box into a brand touchpoint.",
+    aboutMobile:
+      "A from-scratch lettermark and packaging system built around the Filipino spirit of invention — playful, flexible, and designed to tell a story on every surface.",
+    tags: ["Brand Identity"],
+    keywords: ["Wordmark", "Lettermark", "Filipino Brand", "Food Branding", "Custom Typography"],
+    tools: ["Adobe Illustrator", "Adobe Photoshop"],
+    brandColor: "#FF6358",
+    brandColors: [
+      "#FF6358",
+      "#020113",
+      "#EBEAE2",
+    ],
+    typography: [
+      {
+        fontFamily: "Urbanist",
+        weights: ["Bold"],
+        usage: "Brand Logotype",
+        fontFile: "/projects/imbento/fonts/urbanist.ttf",
+      },
+    ],
+    assets: {
+      cover: "/projects/imbento/cover.webp",
+      logo: "/projects/imbento/logo-dark.svg",
+      logotype: "/projects/imbento/logotype.svg",
+      icon: "/projects/imbento/icon.svg",
+      mockups: [
+        "/projects/imbento/1.webp",
+        "/projects/imbento/2.webp",
+        "/projects/imbento/3.webp",
+        "/projects/imbento/4.webp",
+        "/projects/imbento/5.webp",
+        "/projects/imbento/6.webp",
+      ],
+      sketches: ["/projects/imbento/sketch.webp"],
+      vectorization: ["/projects/imbento/logotype-comp.svg"],
+      extras:[
+        "/projects/imbento/tape.webp",
+        "/projects/imbento/pattern.webp",
+        "/projects/imbento/sample-post.webp",
+        "/projects/imbento/pattern-on-white.webp",
+      ],
+      showcase: {
+        highlight: {
+          type: "image",
+          url: "/projects/imbento/cover.webp",
+        },
+        images: [
+          "/projects/imbento/showcase-1.webp",
+          "/projects/imbento/showcase-2.webp",
+        ],
+      },
+      mindMap: {
+      nodes: `
+        Imbento
+          Invented
+            Playful
+            Original
+            Idea
+              Exclamation Point
+          Improvised
+            Spontaneous
+              Surprising
+            Hand-crafted
+              Custom logotype
+            Freestyle
+              Shape variety
+                Bento/Grid
+            
+        Invented > Playful
+        Invented > Original
+        Invented > Idea
+        Idea > Exclamation Point
+        Improvised > Spontaneous
+        Spontaneous > Surprising
+        Surprising > Exclamation Point
+        Improvised > Hand-crafted  
+        Hand-crafted > Custom logotype
+        Improvised > Freestyle
+        Freestyle > Shape variety
+        Shape variety > Bento/Grid     
+      `
+    },
+      conclusions: "Imbento isn't just a food brand — it's a proof of concept that everyday packaging can carry genuine creative weight.",
+    },
+    isSpotlight: true,
   },
 ];
