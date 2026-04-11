@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Palette, Terminal, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LogoTile } from "./LogoTile";
 
 type Mode = "experience" | "engineering";
 
@@ -166,6 +167,9 @@ export function IsometricSwitcher({
           </div>
         </div>
 
+        
+
+
         {/* Email CTA - Bottom Right of the grid context */}
         <div
           className="hidden lg:flex justify-end mt-48 pr-0 lg:translate-x-32"
@@ -190,6 +194,11 @@ export function IsometricSwitcher({
               />
             </div>
           </a>
+        </div>
+
+        {/* Logo Tile */}
+        <div className="mt-30">
+        <LogoTile mode={activeMode} />
         </div>
       </div>
     </div>
