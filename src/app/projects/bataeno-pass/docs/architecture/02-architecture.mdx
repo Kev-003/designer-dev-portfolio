@@ -1,10 +1,3 @@
----
-title: "System Architecture"
-description: "Multi-tenancy, data flow, real-time, and infrastructure design"
-slug: "architecture"
-order: 2
----
-
 # System Architecture
 
 ## High-Level Overview
@@ -59,11 +52,11 @@ storage/app/generated/{user_id}/{barangay_code}/{doc_slug}/{transaction_id}_sign
 
 **Access control levels:**
 
-| Role | Access Scope |
-|---|---|
+| Role     | Access Scope                                   |
+| -------- | ---------------------------------------------- |
 | Resident | Any document where they are the `requester_id` |
-| Official | Documents issued by their own barangay only |
-| Admin | Global download access for audit and support |
+| Official | Documents issued by their own barangay only    |
+| Admin    | Global download access for audit and support   |
 
 ---
 
@@ -91,9 +84,11 @@ TTL: **15 minutes**. Must be invalidated when a `BarangayTerm` is ended, reassig
 Document processing is fully asynchronous via Laravel Queue (database driver):
 
 ### `ProcessDocumentRequest`
+
 Handles official notifications, resident confirmation email, and `DocumentRequestCreated` broadcast. Dispatched via `->afterCommit()` to prevent race conditions where the job fires before the DB transaction completes.
 
 ### `ProcessDocumentApproval`
+
 Wraps `DocumentApprovalService::generateAndSign()`:
 
 1. Browsershot renders the Blade PDF template via headless Chromium
@@ -110,14 +105,14 @@ Wraps `DocumentApprovalService::generateAndSign()`:
 
 Identified via Laravel Telescope in Week 6 as a performance bottleneck.
 
-| Cache Key | TTL | Invalidated When |
-|---|---|---|
-| `channel_auth_{userId}_{barangayCode}` | 15 min | Term ended, delegation revoked |
-| `municipality_{id}_barangay_ids` | 30 min | Barangay added/removed from municipality |
-| `municipality_{id}_stats` | 30 min | Resident transferred, barangay added |
-| `all_barangays` | Permanent | Any barangay created/deleted |
-| `all_municipalities` | Permanent | Any municipality created/deleted |
-| Spatie permissions | — | Any role assignment/revocation |
+| Cache Key                              | TTL       | Invalidated When                         |
+| -------------------------------------- | --------- | ---------------------------------------- |
+| `channel_auth_{userId}_{barangayCode}` | 15 min    | Term ended, delegation revoked           |
+| `municipality_{id}_barangay_ids`       | 30 min    | Barangay added/removed from municipality |
+| `municipality_{id}_stats`              | 30 min    | Resident transferred, barangay added     |
+| `all_barangays`                        | Permanent | Any barangay created/deleted             |
+| `all_municipalities`                   | Permanent | Any municipality created/deleted         |
+| Spatie permissions                     | —         | Any role assignment/revocation           |
 
 ---
 

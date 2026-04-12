@@ -1,3 +1,4 @@
+"use client";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { ProcessSection } from "@/components/sections/ProcessSection";
 import { WorkSpotlight } from "@/components/sections/WorkSpotlight";

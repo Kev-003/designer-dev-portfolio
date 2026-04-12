@@ -1,10 +1,3 @@
----
-title: "Key Design Decisions"
-description: "Architecture tradeoffs and the rationale behind them"
-slug: "decisions"
-order: 5
----
-
 # Key Design Decisions
 
 These decisions represent the major architectural and structural choices made during the 6-week development period. Each was made in response to a real constraint, bug, or performance issue discovered during active development.
@@ -16,10 +9,12 @@ These decisions represent the major architectural and structural choices made du
 **Context (Week 2):** The initial design considered separate transaction tables per document type (e.g., `clearance_transactions`, `indigency_transactions`).
 
 **Decision:** Adopted a single `document_transactions` table with:
+
 - `document_type_id` → `document_type_properties` for type resolution
 - `doc_type_model` field for polymorphic routing to type-specific detail tables
 
 **Why it matters:**
+
 - A single table means a single query to fetch all pending requests in a barangay's queue
 - One authorization middleware covers all document types
 - Audit trail is unified — every transaction lifecycle is in one place
@@ -35,7 +30,7 @@ These decisions represent the major architectural and structural choices made du
 
 **Why it matters:** Storing a `term_id` permanently links each document to the specific legal capacity in which the official was authorized to sign at that moment. Years after a Captain leaves office, the system can still answer:
 
-> *"Who was legally authorized to sign this document, in what position, and was that position still active at the time of signing?"*
+> _"Who was legally authorized to sign this document, in what position, and was that position still active at the time of signing?"_
 
 This is critical for provincial governance accountability and satisfies audit requirements that a `user_id` alone could not.
 
@@ -70,6 +65,7 @@ This is critical for provincial governance accountability and satisfies audit re
 **Decision:** Migrated to Laravel Livewire.
 
 **Why:** The resident portal is backend-heavy. Most interactions require real-time server validation — barangay scoping on document requests, residency eligibility checks, duplicate detection. Livewire keeps all of this logic on the server, eliminating:
+
 - A separate JSON API layer
 - Authorization bypass surface area from client-side enforcement
 - State sync complexity between Vue and Laravel
@@ -85,6 +81,7 @@ It also kept the stack consistent with the Filament admin panels, which already 
 **Problem:** Browsershot PDF generation via headless Chromium takes 2–10 seconds depending on document complexity. This caused HTTP timeouts and blocked the official's interface during approval.
 
 **Decision:** Moved to two dedicated queue jobs:
+
 - `ProcessDocumentRequest` — notifications and broadcasting, dispatched `->afterCommit()`
 - `ProcessDocumentApproval` — PDF generation, storage, checksum, status update
 
@@ -101,6 +98,7 @@ The `afterCommit()` dispatch on `ProcessDocumentRequest` is critical — it ensu
 **Decision:** No database-level foreign key constraint on this field.
 
 **Why:** A proper FK here would create a circular dependency:
+
 - `households` → `household_member_profiles` (via `household_head_id`)
 - `household_member_profiles` → `households` (via `household_id`)
 
@@ -123,6 +121,7 @@ Enforcing both at the DB level causes issues with insert ordering and cascade be
 ## 9 — SHA-256 Checksum + One-Time Download Token
 
 Every issued document gets:
+
 - **SHA-256 checksum** computed from the generated PDF. Stored in `document_transactions.checksum`. On QR scan, the system re-computes the hash and compares. Mismatch → document flagged as Invalid/Tampered.
 - **One-time download token** in `download_token`. Refreshed on every download attempt, preventing unauthorized URL sharing.
 
@@ -130,14 +129,14 @@ Every issued document gets:
 
 ## Summary Table
 
-| Decision | Trigger | Outcome |
-|---|---|---|
-| Unified transaction table | Complexity of split tables | Single queue, single middleware, easy audit |
-| Term-based approver ID | Audit trail accuracy | Legally defensible signing records |
-| Integer `barangay_id` FK | eGovPH code format mismatch bugs | Reliable joins, no format ambiguity |
-| Spatie RBAC | Custom system edge cases | Industry-standard, Filament-integrated |
-| Livewire over Vue.js | Backend-heavy validation needs | Simpler stack, smaller attack surface |
-| Queue jobs for PDF | HTTP timeouts on Browsershot | Non-blocking approvals, retriable failures |
-| No FK on `household_head_id` | Circular dependency | Application-layer enforcement instead |
-| NFC local DB only | External API unreliability | Reliable desk operations |
-| Checksum + one-time token | Document forgery / sharing | Tamper detection + access control |
+| Decision                     | Trigger                          | Outcome                                     |
+| ---------------------------- | -------------------------------- | ------------------------------------------- |
+| Unified transaction table    | Complexity of split tables       | Single queue, single middleware, easy audit |
+| Term-based approver ID       | Audit trail accuracy             | Legally defensible signing records          |
+| Integer `barangay_id` FK     | eGovPH code format mismatch bugs | Reliable joins, no format ambiguity         |
+| Spatie RBAC                  | Custom system edge cases         | Industry-standard, Filament-integrated      |
+| Livewire over Vue.js         | Backend-heavy validation needs   | Simpler stack, smaller attack surface       |
+| Queue jobs for PDF           | HTTP timeouts on Browsershot     | Non-blocking approvals, retriable failures  |
+| No FK on `household_head_id` | Circular dependency              | Application-layer enforcement instead       |
+| NFC local DB only            | External API unreliability       | Reliable desk operations                    |
+| Checksum + one-time token    | Document forgery / sharing       | Tamper detection + access control           |

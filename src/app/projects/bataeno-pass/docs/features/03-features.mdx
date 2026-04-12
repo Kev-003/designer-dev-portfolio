@@ -1,10 +1,3 @@
----
-title: "Feature Specifications"
-description: "The seven core features of the Barangay Module"
-slug: "features"
-order: 3
----
-
 # Feature Specifications
 
 ## Feature 1 — Resident Certificate/Form Request
@@ -14,6 +7,7 @@ Enables residents to digitally apply for barangay documents without visiting the
 **Input:** Document type selection, stated purpose, supporting file uploads (e.g., utility bill for residency, valid ID).
 
 **Process:**
+
 1. System verifies the resident's barangay link
 2. Checks for existing active duplicate of the same document type
 3. Creates a `document_transactions` record with `status: pending`
@@ -21,6 +15,7 @@ Enables residents to digitally apply for barangay documents without visiting the
 **Output:** Tracking ID for the resident to monitor request status.
 
 **Edge Cases:**
+
 - Unverified user → prompted to complete eGovPH registration first
 - Purpose = "Other" → mandatory free-text field appears
 
@@ -33,15 +28,18 @@ Allows barangay officials to assist residents with limited tech access.
 **Target Users:** Barangay Secretary, Enrollment Staff.
 
 **Registration methods supported:**
+
 - PhilID QR code scan (custom blood type decoding included)
 - NFC card tap (UID → local resident lookup)
 - Manual 2-column form (Name + Birthday)
 
 **"Double-Guard" Duplicate Detection:**
+
 - UI: Create button disabled on match
 - Server-side: UUID and email uniqueness check
 
 **Edge Cases:**
+
 - Resident already exists → "Record Found" displayed; offers to update residency details
 
 ---
@@ -53,6 +51,7 @@ Officials review and sign documents through the Filament panel.
 ### Signing Authority — Triple Match Check
 
 Before any document can be issued, the system validates:
+
 1. **Auth** — Is the official authenticated?
 2. **Authority** — Is the official's term currently active (`ended_at IS NULL`)?
 3. **Scope** — Does the official's `barangay_id` match the requester's `barangay_id`?
@@ -68,23 +67,25 @@ Is the official the Barangay Captain?
 ```
 
 **Document Rendering by Capacity:**
-- `Native` → *"Hon. [Captain Name], Barangay Captain"*
-- `Acting` → *"Hon. [Secretary Name], Barangay Secretary — By Authority of the Barangay Captain"*
+
+- `Native` → _"Hon. [Captain Name], Barangay Captain"_
+- `Acting` → _"Hon. [Secretary Name], Barangay Secretary — By Authority of the Barangay Captain"_
 
 ### Document Validity Periods
 
-| Document Type | Validity | Notes |
-|---|---|---|
-| Barangay Clearance | 180 days | Checks "No Pending Cases" flag |
-| Certificate of Residency | 180 days | Verified against Household Registry |
-| Indigency Certificate | 90 days | Requires "Low Income" flag in user cache |
-| Good Moral Character | 180 days | Standard conduct certification |
-| Business Clearance | 365 days | Linked to City/Municipal permit cycles |
-| No Objection | 30–90 days | Project-specific |
+| Document Type            | Validity   | Notes                                    |
+| ------------------------ | ---------- | ---------------------------------------- |
+| Barangay Clearance       | 180 days   | Checks "No Pending Cases" flag           |
+| Certificate of Residency | 180 days   | Verified against Household Registry      |
+| Indigency Certificate    | 90 days    | Requires "Low Income" flag in user cache |
+| Good Moral Character     | 180 days   | Standard conduct certification           |
+| Business Clearance       | 365 days   | Linked to City/Municipal permit cycles   |
+| No Objection             | 30–90 days | Project-specific                         |
 
 **Expiry formula:** `E = issued_at + validity_days`
 
 ### Edge Cases
+
 - Expired official term → "Issue" button disabled; admin prompted to update Officials Directory
 - Captain term ends with active delegation → system automatically voids all delegations tied to that `term_id`
 
@@ -116,12 +117,12 @@ House (physical structure)
 
 ### Key Constraints
 
-| Constraint | Enforcement |
-|---|---|
-| One Primary residency per user | `idx_unique_active_primary_resident` partial unique index |
-| One active Head per household | `idx_single_active_household_head` partial unique index |
-| Jurisdictional locking | Household's `barangay_id` inherited from house; cannot be changed directly |
-| Head succession | Head cannot be removed unless successor is designated or household marked Inactive |
+| Constraint                     | Enforcement                                                                        |
+| ------------------------------ | ---------------------------------------------------------------------------------- |
+| One Primary residency per user | `idx_unique_active_primary_resident` partial unique index                          |
+| One active Head per household  | `idx_single_active_household_head` partial unique index                            |
+| Jurisdictional locking         | Household's `barangay_id` inherited from house; cannot be changed directly         |
+| Head succession                | Head cannot be removed unless successor is designated or household marked Inactive |
 
 ### Resident Dashboard (Livewire)
 
@@ -134,6 +135,7 @@ House (physical structure)
 ### Official Approval Workflow
 
 On approving a `ResidencyRequest`:
+
 1. If `household_id` is present → link user to existing household
 2. If `household_id` is null → auto-create new `House` + `Household`
 3. If `role = Head` → update `households.household_head_id`
@@ -141,12 +143,12 @@ On approving a `ResidencyRequest`:
 
 ### Edge Cases
 
-| Scenario | Behavior |
-|---|---|
-| Head dies or moves | Atomic Succession triggered; system prompts for a successor |
-| Resident at boarding house | Added as `presence_status = Secondary`; family home stays `Primary` for subsidy eligibility |
-| Wrong barangay registration | Blocked — house's `barangay_id` must match the official's scope |
-| Double-Primary attempt | Database rejects via `idx_unique_active_primary_resident`; relocation workflow required |
+| Scenario                    | Behavior                                                                                    |
+| --------------------------- | ------------------------------------------------------------------------------------------- |
+| Head dies or moves          | Atomic Succession triggered; system prompts for a successor                                 |
+| Resident at boarding house  | Added as `presence_status = Secondary`; family home stays `Primary` for subsidy eligibility |
+| Wrong barangay registration | Blocked — house's `barangay_id` must match the official's scope                             |
+| Double-Primary attempt      | Database rejects via `idx_unique_active_primary_resident`; relocation workflow required     |
 
 ---
 
@@ -156,13 +158,13 @@ Tracks nuclear family relationships and automates family lifecycle management.
 
 ### Automated Family Lifecycle — `UserObserver`
 
-| Event | Action |
-|---|---|
-| User assigned Father + Mother | System auto-creates (or finds) a family unit for that parent pair |
-| User becomes a parent | Migrated into their nuclear family unit |
-| Family reaches 0 members | Family record auto-deleted |
-| Both parents deceased + all children moved out | Family record auto-deleted |
-| Lone surviving parent | May remain in the family record; if manually moved, empty family is immediately cleaned up |
+| Event                                          | Action                                                                                     |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| User assigned Father + Mother                  | System auto-creates (or finds) a family unit for that parent pair                          |
+| User becomes a parent                          | Migrated into their nuclear family unit                                                    |
+| Family reaches 0 members                       | Family record auto-deleted                                                                 |
+| Both parents deceased + all children moved out | Family record auto-deleted                                                                 |
+| Lone surviving parent                          | May remain in the family record; if manually moved, empty family is immediately cleaned up |
 
 ### Lineage Tree — D3.js
 
@@ -182,6 +184,7 @@ Read-only, municipality-scoped panel for oversight across all barangays in a mun
 **Tenant slug:** `municity_code`
 
 **Resources (all read-only):**
+
 - `BarangaysResource` — barangay list with active captain status badge
 - `OfficialsResource` — all official terms, filterable by position/barangay/active status
 - `ResidentResource` — resident list with lineage tree modal
