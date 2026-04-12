@@ -17,12 +17,20 @@ import {
   VolumeX,
   ArrowUpRight,
 } from "lucide-react";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+// import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import dynamic from "next/dynamic";
+const DotLottieReact = dynamic(
+  () => import("@lottiefiles/dotlottie-react").then((m) => m.DotLottieReact),
+  { ssr: false },
+);
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { Project } from "@/lib/projects";
 import { ProjectTag } from "@/components/ui/ProjectTag";
-import { MindMap } from "../ui/MindMap";
+//import { MindMap } from "../ui/MindMap";
+const MindMap = dynamic(() => import("../ui/MindMap").then((m) => m.MindMap), {
+  ssr: false,
+});
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -220,7 +228,10 @@ function DocumentationSection({
               <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest">
                 0{i + 1}
               </span>
-              <ArrowUpRight size={16} className="text-zinc-600 group-hover:text-brand transition-colors group-hover:translate-x-1 group-hover:-translate-y-1" />
+              <ArrowUpRight
+                size={16}
+                className="text-zinc-600 group-hover:text-brand transition-colors group-hover:translate-x-1 group-hover:-translate-y-1"
+              />
             </div>
             <h3 className="text-lg font-bold text-zinc-200 mb-2 group-hover:text-white transition-colors">
               {doc.title}
