@@ -47,6 +47,12 @@ export type ProjectAssets = {
   /** Short paragraph or takeaway for the process' final conclusion slide */
   conclusions?: string;
   liveUrl?: string;
+  /** Documented sections in MDX */
+  mdxDocs?: {
+    title: string;
+    description: string;
+    url: string;
+  }[];
 };
 
 export type Project = {
@@ -190,6 +196,14 @@ export const PROJECTS: Project[] = [
       erd: [],
       documentation: [],
       snippets: [],
+      mdxDocs: [
+        { title: "Project Overview", description: "Bataeño Pass — Barangay-Level Implementation", url: "/projects/bataeno-pass/docs/overview" },
+        { title: "System Architecture", description: "Multi-tenancy, data flow, real-time, and infrastructure design", url: "/projects/bataeno-pass/docs/architecture" },
+        { title: "Feature Specifications", description: "The seven core features of the Barangay Module", url: "/projects/bataeno-pass/docs/features" },
+        { title: "Database Design", description: "38-table schema across 8 functional groups with design rationale", url: "/projects/bataeno-pass/docs/database" },
+        { title: "Key Design Decisions", description: "Architecture tradeoffs and the rationale behind them", url: "/projects/bataeno-pass/docs/decisions" },
+        { title: "Development Changelog", description: "6-week development log from February 2 to March 10, 2026", url: "/projects/bataeno-pass/docs/changelog" }
+      ],
     },
     isSpotlight: true,
   },
@@ -207,14 +221,136 @@ export const PROJECTS: Project[] = [
     keywords: ["Corporate Identity", "Developer Branding", "Minimalism", "B2B"],
     tools: ["Figma", "Adobe Illustrator"],
     brandColor: "#0052cc",
+    brandColors: [
+      "#0052cc",
+      "#FFB000",
+      "#F2F2F2",
+      "#EBEBEB",
+      "#D0D0D0",
+      "#282828",
+    ],
+    typography: [
+      {
+        fontFamily: "Plus Jakarta Sans",
+        weights: ["ExtraBold", "Semibold", "Bold", "Regular", "Light", "ExtraLight"],
+        usage: "Brand Logotype, Heading, Body Text",
+        fontFile: "/projects/edmer-software/fonts/PlusJakartaSans-VariableFont_wght.ttf",
+      },
+      {
+        fontFamily: "Chakra Petch",
+        weights: ["Medium"],
+        usage: "CTA",
+        fontFile: "/projects/edmer-software/fonts/ChakraPetch-Medium.ttf",
+      },
+    ],
     assets: {
-      cover: "/projects/edmer-software/cover.jpg",
+      cover: "/projects/edmer-software/cover.webp",
       logo: "/projects/edmer-software/logo.svg",
       logotype: "/projects/edmer-software/logotype.svg",
       icon: "/projects/edmer-software/icon.svg",
-      mockups: [],
-      sketches: [],
-      vectorization: [],
+      mockups: [
+        "/projects/edmer-software/showcase-1.webp",
+        "/projects/edmer-software/website-mockup.webp",
+        "/projects/edmer-software/showcase-2.webp",
+      ],
+      sketches: ["/projects/edmer-software/sketch.webp"],
+      vectorization: ["/projects/edmer-software/icon-comp.svg"],
+      extras: [
+        "/projects/edmer-software/asset-2.webp",
+        "/projects/edmer-software/color-applications.webp",
+        "/projects/edmer-software/icon-comp-2.webp",
+        "/projects/edmer-software/asset-1.webp",
+        
+
+      ],
+      showcase: {
+        highlight: {
+          type: "image",
+          url: "/projects/edmer-software/cover.webp",
+        },
+        images: [
+          "/projects/edmer-software/showcase-1.webp",
+          "/projects/edmer-software/showcase-2.webp",
+        ],
+      },
+      mindMap: {
+      nodes: `
+        Edmer Software Solutions
+          Expertise
+            Complete Solution
+              Integrated
+              Sense of completeness
+                Closed shape
+            Specialized Mastery
+              Focus
+            Authoritative
+          Scale
+            Global
+            End-to-end
+          Corporate Visuals
+            Negative Space
+            Clean Lines
+            Sophisticated
+            Modern and Minimalist
+            Kinetic Momentum
+              Motion cues
+          Reliability
+            Structural Integrity
+              Strict grid system
+              Architectural
+                Pillar
+                Foundation
+                Building Material
+                  Bricks
+                  Concrete
+            Technical Precision
+              Thin lines
+              High contrast
+              Focus
+                Crosshair
+                Target
+                Focus Frame
+          Innovation
+            Futuristic
+          Client-centric
+            Custom-built
+
+          Expertise > Complete Solution
+          Complete Solution > Integrated
+          Complete Solution > Sense of completeness
+          Sense of completeness > Closed shape
+          Expertise > Specialized Mastery
+          Specialized Mastery > Focus
+          Expertise > Authoritative
+          Scale > Global
+          Scale > End-to-end
+          Corporate Visuals > Negative Space
+          Corporate Visuals > Clean Lines
+          Corporate Visuals > Sophisticated
+          Corporate Visuals > Modern and Minimalist
+          Corporate Visuals > Kinetic Momentum
+          Kinetic Momentum > Motion cues
+          Kinetic Momentum > Whitespace
+          Reliability > Structural Integrity
+          Structural Integrity > Strict grid system
+          Structural Integrity > Architectural
+          Architectural > Pillar
+          Architectural > Foundation
+          Architectural > Building Material
+          Building Material > Bricks
+          Building Material > Concrete
+          Reliability > Technical Precision
+          Technical Precision > Thin lines
+          Technical Precision > High contrast
+          Technical Precision > Focus
+          Focus > Crosshair
+          Focus > Target
+          Focus > Focus Frame
+          Innovation > Futuristic
+          Client-centric > Custom-built
+      `
+    },
+    conclusions: "Through structured discovery, the brand's core position was defined: a specialized solution architect operating at the intersection of IoT and modern web development — a rare and defensible niche in the international market. The resulting identity system — grounded in structural integrity, technical precision, and kinetic momentum — translates that specialization into a visual language that feels engineered, intentional, and enterprise-ready. Every element, from logo symbolism to typographic direction, is built to signal the same thing: a developer who has outgrown the generalist label and is ready to compete for high-value, complex engagements.",
     },
     isSpotlight: true,
   },

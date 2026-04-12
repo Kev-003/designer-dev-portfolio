@@ -66,7 +66,7 @@ function MorphHeadline({ mode }: { mode: "experience" | "engineering" }) {
   return (
     <h1
       ref={hlRef}
-      className={`text-4xl md:text-6xl font-extrabold tracking-tight text-balance overflow-hidden
+      className={`text-4xl md:text-6xl font-extrabold tracking-tight text-balance xl:whitespace-nowrap overflow-hidden
         transition-colors duration-300 pb-5
         ${mode === "experience" ? "text-brand" : "text-white"}`}
     />
@@ -115,9 +115,9 @@ export function HeroSection({ mode = "experience", onModeChange }: Props) {
 
   return (
     <div className="min-h-[95dvh] flex flex-col pt-24 md:pt-0 pb-12 overflow-hidden">
-      <div className="flex-1 px-6 md:px-12 max-w-6xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-start md:justify-center gap-6 md:gap-30 pb-10">
-        {/* Isometric Switcher Container - Left aligned on mobile, right on desktop */}
-        <div className="relative z-40 flex items-start mr-0 lg:-mr-20 justify-start order-1 md:order-2 overflow-visible pointer-events-auto origin-left scale-65 sm:scale-75 md:scale-100 lg:scale-110">
+      <div className="flex-1 px-6 md:px-12 lg:px-10 max-w-6xl xl:max-w-7xl mx-auto w-full max-h-[80dvh] flex flex-col md:flex-row items-start md:items-center justify-start md:justify-between gap-6 pb-10">
+        {/* Isometric Switcher */}
+        <div className="relative z-40 flex items-start justify-start order-1 md:order-2 overflow-visible pointer-events-auto origin-left scale-65 sm:scale-75 md:scale-100 lg:scale-105 md:mr-[-2rem] lg:mr-[-4rem] xl:mr-[-6rem]">
           <IsometricSwitcher
             activeMode={activeMode}
             onChange={handleModeChange}
@@ -125,17 +125,15 @@ export function HeroSection({ mode = "experience", onModeChange }: Props) {
         </div>
 
         {/* Text Content */}
-        <div className="flex flex-col order-2 md:order-1 flex-1 text-left ml-0 lg:-ml-100 mr-20">
+        <div className="flex flex-col order-2 md:order-1 w-full md:max-w-sm lg:max-w-md xl:max-w-none xl:min-w-[45rem] xl:-translate-x-12 text-left min-w-0">
           <MorphHeadline mode={activeMode} />
-
           <p
-            className={`mt-4 max-w-xl text-lg md:text-xl leading-relaxed ${activeMode === "experience" ? "text-foreground opacity-90" : "text-zinc-400"} mr-20`}
+            className={`mt-4 max-w-xl xl:max-w-2xl text-lg md:text-xl leading-relaxed ${activeMode === "experience" ? "text-foreground opacity-90" : "text-zinc-400"}`}
           >
             {DESCRIPTIONS[activeMode]}
           </p>
         </div>
       </div>
-
       <LogoTicker />
     </div>
   );

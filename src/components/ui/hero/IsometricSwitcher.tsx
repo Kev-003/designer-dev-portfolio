@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Palette, Terminal, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LogoTile } from "./LogoTile";
 
 type Mode = "experience" | "engineering";
 
@@ -22,6 +23,16 @@ export function IsometricSwitcher({
   const containerRef = useRef<HTMLDivElement>(null);
   const activeTileRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
+  const busy = useRef(false);
+
+  const handleClick = (mode: Mode) => {
+    if (busy.current || mode === activeMode) return;
+    busy.current = true;
+    onChange(mode);
+    setTimeout(() => {
+      busy.current = false;
+    }, 800); // Wait for animations to settle
+  };
 
   useGSAP(
     () => {
@@ -98,7 +109,7 @@ export function IsometricSwitcher({
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                onChange("experience");
+                handleClick("experience");
               }}
               className={cn(
                 "group relative w-16 h-16 flex items-center justify-center rounded-sm border transition-all duration-500 cursor-pointer overflow-visible",
@@ -117,7 +128,7 @@ export function IsometricSwitcher({
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                onChange("engineering");
+                handleClick("engineering");
               }}
               className={cn(
                 "group relative w-16 h-16 flex items-center justify-center rounded-sm border transition-all duration-500 cursor-pointer overflow-visible",
@@ -166,6 +177,9 @@ export function IsometricSwitcher({
           </div>
         </div>
 
+        
+
+
         {/* Email CTA - Bottom Right of the grid context */}
         <div
           className="hidden lg:flex justify-end mt-48 pr-0 lg:translate-x-32"
@@ -190,6 +204,11 @@ export function IsometricSwitcher({
               />
             </div>
           </a>
+        </div>
+
+        {/* Logo Tile */}
+        <div className="mt-30">
+        <LogoTile mode={activeMode} />
         </div>
       </div>
     </div>

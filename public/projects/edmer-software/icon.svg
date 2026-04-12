@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 3000 3000" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-3050,0)">
+        <rect id="Icon-Submark" serif:id="Icon/Submark" x="3050" y="0" width="3000" height="3000" style="fill:none;"/>
+        <g id="Icon-Submark1" serif:id="Icon/Submark">
+            <g transform="matrix(17.551537,0,0,18.102273,-3328.725949,-3908.949328)">
+                <path d="M422.481,346.777L422.481,363.223L387.519,363.223L387.519,328.797L404.481,328.797L404.481,346.777L422.481,346.777Z" style="fill:rgb(0,82,204);"/>
+                <g transform="matrix(1.163043,0,0,1.12766,-3843.293478,-2372.808511)">
+                    <path d="M3652.292,2348.271L3637.708,2348.271L3637.708,2317.708L3667.768,2317.708L3667.768,2332.292L3652.292,2332.292L3652.292,2348.271Z" style="fill:rgb(0,82,204);"/>
+                </g>
+                <g transform="matrix(1.163043,0,0,1.12766,-3843.293478,-2372.808511)">
+                    <path d="M3728.849,2391.552L3679.161,2391.552L3679.161,2379.052L3704.956,2379.052L3704.956,2364.931L3679.161,2364.931L3679.161,2352.431L3728.849,2352.431L3728.849,2332.292L3713.372,2332.292L3713.372,2317.708L3743.432,2317.708L3743.433,2364.931L3717.456,2364.931L3717.456,2379.052L3743.44,2379.052L3743.432,2426.292L3713.372,2426.292L3713.372,2411.708L3728.849,2411.708L3728.849,2391.552Z" style="fill:rgb(0,82,204);"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -67,7 +67,11 @@ function BrandLogo({ name, lightInvert, isDark }: Brand & { isDark: boolean }) {
 
 export function LogoTicker() {
   const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
+  const [mounted, setMounted] = useState(false);
+
+  // Guard against hydration mismatch by defaulting to light mode (false)
+  // until the component has mounted on the client.
+  const isDark = mounted ? resolvedTheme === "dark" : false;
 
   // Duplicate once — GSAP loops by animating 0 → -50% of total width
   const items = [...BRANDS, ...BRANDS];
@@ -77,6 +81,7 @@ export function LogoTicker() {
   const scaleRef = useRef<gsap.core.Tween | null>(null);
 
   useEffect(() => {
+    setMounted(true);
     const track = trackRef.current;
     if (!track) return;
 
@@ -115,7 +120,7 @@ export function LogoTicker() {
 
   return (
     <div
-      className="border-y border-zinc-200 dark:border-zinc-800 w-full flex pl-30 items-center h-[120px] relative overflow-hidden z-30"
+      className="bg-background border-y border-zinc-200 dark:border-zinc-800 w-full flex pl-30 items-center h-[120px] relative overflow-hidden z-40"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
