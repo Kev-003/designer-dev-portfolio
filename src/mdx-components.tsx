@@ -42,15 +42,27 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         {...props}
       />
     ),
-    code: (props) => (
-      <code
-        className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono text-foreground"
-        {...props}
-      />
-    ),
+    code: ({ className, children, ...props }: any) => {
+      const isBlock =
+        (typeof children === "string" && children.includes("\n")) ||
+        (className && className.includes("language-"));
+
+      const baseClasses = "font-mono text-xs";
+      const inlineClasses = "bg-muted px-1.5 py-0.5 rounded text-foreground";
+      const blockClasses = "bg-transparent text-inherit p-0";
+
+      return (
+        <code
+          className={`${baseClasses} ${isBlock ? blockClasses : inlineClasses} ${className || ""}`}
+          {...props}
+        >
+          {children}
+        </code>
+      );
+    },
     pre: (props) => (
       <pre
-        className="bg-zinc-950 dark:bg-zinc-900 border border-zinc-800 rounded-md p-4 overflow-x-auto my-6 text-xs font-mono text-zinc-300 leading-relaxed"
+        className="bg-zinc-950 dark:bg-zinc-900 border border-zinc-800 rounded-md p-4 overflow-x-auto my-6 text-xs font-mono text-zinc-300 leading-relaxed [&>code]:!bg-transparent [&>code]:!text-inherit [&>code]:!p-0"
         {...props}
       />
     ),

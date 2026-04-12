@@ -23,6 +23,16 @@ export function IsometricSwitcher({
   const containerRef = useRef<HTMLDivElement>(null);
   const activeTileRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
+  const busy = useRef(false);
+
+  const handleClick = (mode: Mode) => {
+    if (busy.current || mode === activeMode) return;
+    busy.current = true;
+    onChange(mode);
+    setTimeout(() => {
+      busy.current = false;
+    }, 800); // Wait for animations to settle
+  };
 
   useGSAP(
     () => {
@@ -99,7 +109,7 @@ export function IsometricSwitcher({
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                onChange("experience");
+                handleClick("experience");
               }}
               className={cn(
                 "group relative w-16 h-16 flex items-center justify-center rounded-sm border transition-all duration-500 cursor-pointer overflow-visible",
@@ -118,7 +128,7 @@ export function IsometricSwitcher({
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                onChange("engineering");
+                handleClick("engineering");
               }}
               className={cn(
                 "group relative w-16 h-16 flex items-center justify-center rounded-sm border transition-all duration-500 cursor-pointer overflow-visible",
