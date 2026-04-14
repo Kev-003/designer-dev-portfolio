@@ -1082,6 +1082,22 @@ export function ProjectLayout({ project }: { project: Project }) {
           {/* Meta sidebar */}
           {hasMeta && (
             <div className="space-y-8 pt-1">
+              {assets.liveUrl && (
+                <a
+                  href={assets.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-2 px-4 py-2 rounded-full border border-zinc-800 bg-zinc-950/50 hover:bg-zinc-900/80 hover:border-zinc-700 transition-all duration-300"
+                >
+                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-400 group-hover:text-zinc-100">
+                    Live Site
+                  </span>
+                  <ArrowUpRight
+                    size={14}
+                    className="text-zinc-500 group-hover:text-brand group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all"
+                  />
+                </a>
+              )}
               {tools && tools.length > 0 && (
                 <div>
                   <span className="font-mono text-[11px] tracking-[0.2em] text-zinc-600 uppercase block mb-3">

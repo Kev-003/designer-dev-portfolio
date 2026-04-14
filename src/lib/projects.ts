@@ -135,15 +135,15 @@ export const PROJECTS: Project[] = [
         "/projects/courant/banner.webp",
       ],
       showcase: {
-      highlight: {
-        type: "video",
-        url: "/projects/courant/highlight.mp4",
+        highlight: {
+          type: "video",
+          url: "/projects/courant/highlight.mp4",
+        },
+        images: [
+          "/projects/courant/showcase-1.webp",
+          "/projects/courant/showcase-2.webp",
+        ],
       },
-      images: [
-        "/projects/courant/showcase-1.webp",
-        "/projects/courant/showcase-2.webp",
-      ],
-    },
     mindMap: {
       nodes: `
         Courant
@@ -191,7 +191,7 @@ export const PROJECTS: Project[] = [
     tools: ["Atlassian Confluence", "DBDiagram.io"],
     brandColor: "#059669",
     assets: {
-      cover: "/projects/bataeno-pass/cover.jpg",
+      cover: "/projects/bataeno-pass/cover.webp",
       mockups: [],
       erd: [],
       documentation: [],
@@ -203,6 +203,35 @@ export const PROJECTS: Project[] = [
         { title: "Database Design", description: "38-table schema across 8 functional groups with design rationale", url: "/projects/bataeno-pass/docs/database" },
         { title: "Key Design Decisions", description: "Architecture tradeoffs and the rationale behind them", url: "/projects/bataeno-pass/docs/decisions" },
         { title: "Development Changelog", description: "6-week development log from February 2 to March 10, 2026", url: "/projects/bataeno-pass/docs/changelog" }
+      ],
+      showcase: {
+        highlight: {
+          type: "image",
+          url: "/projects/bataeno-pass/cover.webp",
+        },
+        images: [
+          "/projects/bataeno-pass/showcase-1.webp",
+          "/projects/bataeno-pass/showcase-2.webp",
+        ],
+      },
+      liveUrl: "http://140.245.101.250:8001/",
+      extras: [
+        "/projects/bataeno-pass/extra-1.webp",
+        "/projects/bataeno-pass/extra-2.webp",
+        "/projects/bataeno-pass/extra-3.webp",
+        "/projects/bataeno-pass/extra-4.webp",
+        "/projects/bataeno-pass/extra-5.webp",
+        "/projects/bataeno-pass/extra-6.webp",
+        "/projects/bataeno-pass/extra-7.webp",
+        "/projects/bataeno-pass/extra-8.webp",
+        "/projects/bataeno-pass/extra-9.webp",
+        "/projects/bataeno-pass/extra-10.webp",
+        "/projects/bataeno-pass/extra-11.webp",
+        "/projects/bataeno-pass/extra-12.webp",
+        "/projects/bataeno-pass/extra-13.webp",
+        "/projects/bataeno-pass/extra-14.webp",
+        "/projects/bataeno-pass/extra-15.webp",
+
       ],
     },
     isSpotlight: true,
