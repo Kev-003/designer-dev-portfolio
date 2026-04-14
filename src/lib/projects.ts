@@ -59,6 +59,10 @@ export type Project = {
   slug: string;
   name: string;
   year: string;
+  team?: {
+    name: string;
+    role: string;
+  }[];
   /** Short tagline — shown in WorkSpotlight card */
   mission: string;
   /** Longer project narrative — shown in ProjectLayout */
@@ -104,6 +108,25 @@ export const PROJECTS: Project[] = [
     keywords: ["Realtime Monitoring", "Cost Optimization", "Sustainability", "IoT", "Clean Energy"],
     technologies:["Filament PHP", "Laravel", "Tailwind CSS", "Alpine.js", "MySQL", "Flask", "Python", "TensorFlow", "PlatformIO", "Scikit-learn", "MQTT"],
     tools: ["Adobe After Effects", "Adobe Illustrator", "Adobe Photoshop"],
+    team: [
+      {
+        name: "John Edmerson Pizarra",
+        role: "Lead Developer, Researcher",
+      },
+      {
+        name: "Florence Gayle Magpoc",
+        role: "UI/UX Designer, Front End Developer, Documenter",
+      },
+      {
+        name: "Jian Ross Dela Rosa",
+        role: "Researcher, Documenter",
+      },
+      {
+        name: "Kevern Angeles",
+        role: "Brand and UI/UX Designer, Front End Developer, Documentation Lead",
+      },
+      
+    ],
     brandColor: "#e8a216",
     brandColors: ["#e8a216", "#131313", "#EAEAEA", "#D7D6D6"],
     typography: [
@@ -189,6 +212,28 @@ export const PROJECTS: Project[] = [
     keywords: ["Government Tech", "Public Service", "Data Security", "Digital Transformation"],
     technologies: ["Laravel", "Livewire", "Reverb", "Alpine.js", "MySQL", "Tailwind CSS", "Filament PHP"],
     tools: ["Atlassian Confluence", "DBDiagram.io"],
+    team: [
+      {
+        name: "Kevern Angeles",
+        role: "Lead Developer, System Analyst, Database Designer, Documentation Lead",
+      },
+      {
+        name: "Russel Matthew Santos",
+        role: "Full-Stack Developer, Database Designer, Documenter",
+      },
+      {
+        name: "Mr. Paolo Nuestro",
+        role: "Technology Officer, Project Manager",
+      },
+      {
+        name: "Mr. Nixon Somoza",
+        role: "Technology Officer, Project Consultant",
+      },
+      {
+        name: "Mr. Bryan Gonzales",
+        role: "Technology Officer, Project Consultant",
+      },
+    ],
     brandColor: "#059669",
     assets: {
       cover: "/projects/bataeno-pass/cover.webp",

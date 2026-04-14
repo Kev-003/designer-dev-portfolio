@@ -1134,6 +1134,25 @@ export function ProjectLayout({ project }: { project: Project }) {
                   </div>
                 </div>
               )}
+              {project.team && project.team.length > 0 && (
+                <div>
+                  <span className="font-mono text-[11px] tracking-[0.2em] text-zinc-600 uppercase block mb-3">
+                    Team
+                  </span>
+                  <div className="flex flex-col gap-2">
+                    {project.team.map((member) => (
+                      <div key={member.name} className="flex flex-col">
+                        <span className="text-[11px] text-zinc-300 font-medium">
+                          {member.name}
+                        </span>
+                        <span className="font-mono text-[9px] text-zinc-600 uppercase tracking-widest">
+                          {member.role}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
