@@ -99,19 +99,19 @@ export const PROJECTS: Project[] = [
     name: "Courant",
     year: "2025",
     mission:
-      "Brand identity & digital presence for a startup featuring a smart power management system with AI-powered energy optimization.",
+      "Full-stack architecture and multi-device visual design token system for an AI-powered IoT energy telemetry platform.",
     description:
-      "Courant was built to bridge the gap between complex IoT energy data and intuitive consumer experiences. The project involved creating a visual language that felt both technical and accessible, followed by a documentation-lead approach to the system's frontend architecture. Key challenges included translating high-frequency sensor data into meaningful visualizations that empower users to reduce their carbon footprint without sacrificing convenience.",
+      "Courant bridges the gap between high-frequency concurrent IoT data pipelines and accessible user execution. As a technical founder, I structured a systematic visual token pipeline that compiled across hardware documentation, physical user manuals, research colloquium assets, and a responsive web application. The core challenge was designing a predictable frontend architecture capable of rendering real-time streaming telemetry and Isolation Forest anomalies into strict, intuitive UI layouts without performance degradation.",
     aboutMobile:
-      "A smart power management system that simplifies IoT energy data into intuitive, actionable insights for sustainability-minded users.",
-    tags: ["Brand Identity", "UI/UX"],
-    keywords: ["Realtime Monitoring", "Cost Optimization", "Sustainability", "IoT", "Clean Energy"],
-    technologies:["Filament PHP", "Laravel", "Tailwind CSS", "Alpine.js", "MySQL", "Flask", "Python", "TensorFlow", "PlatformIO", "Scikit-learn", "MQTT"],
-    tools: ["Adobe After Effects", "Adobe Illustrator", "Adobe Photoshop"],
+      "A smart power management interface translating streaming IoT telemetry and model analytics into predictable, zero-latency visual states.",
+    tags: ["Systems Design", "Frontend Engineering", "Data Visualization"],
+    keywords: ["Realtime Monitoring", "Cost Optimization", "Sustainability", "IoT", "Clean Energy", "Design Tokens"],
+    technologies: ["Filament PHP", "Laravel", "Tailwind CSS", "Alpine.js", "MySQL", "Flask", "Python", "TensorFlow", "PlatformIO", "Scikit-learn", "MQTT"],
+    tools: ["Adobe After Effects", "Adobe Illustrator", "Adobe Photoshop", "Figma"],
     team: [
       {
         name: "John Edmerson Pizarra",
-        role: "Lead Developer, Researcher",
+        role: "Lead Backend Developer, ML Researcher",
       },
       {
         name: "Florence Gayle Magpoc",
@@ -123,9 +123,8 @@ export const PROJECTS: Project[] = [
       },
       {
         name: "Kevern Angeles",
-        role: "Brand and UI/UX Designer, Front End Developer, Documentation Lead",
+        role: "Co-Founder, Systems Designer, Frontend Engineer, Documentation Lead",
       },
-      
     ],
     brandColor: "#e8a216",
     brandColors: ["#e8a216", "#131313", "#EAEAEA", "#D7D6D6"],
@@ -133,13 +132,13 @@ export const PROJECTS: Project[] = [
       {
         fontFamily: "August Bold",
         weights: ["Bold"],
-        usage: "Brand Logotype",
+        usage: "Brand System Anchors",
         fontFile: "/projects/courant/fonts/august-bold.ttf",
       },
       {
         fontFamily: "Helvetica",
         weights: ["Regular", "Medium", "Bold"],
-        usage: "Product Interface",
+        usage: "Product Telemetry Interface",
       },
     ],
     assets: {
@@ -167,34 +166,34 @@ export const PROJECTS: Project[] = [
           "/projects/courant/showcase-2.webp",
         ],
       },
-    mindMap: {
-      nodes: `
-        Courant
-          Electricity
-            Lightbulb
-            Socket
-            I/O
-          Safety
-            Rounded Edges
-          Maintenance
-            Repair
-              Yellow
-          Power
-            Sustainability
-            Lightning
-              Bolt
-          Current
-        Electricity > Power
-        Electricity > Safety
-        Electricity > Maintenance
-        Power > Current
-        Lightning > Bolt
-        Repair > Yellow
-      `
-    },
-    fullPage: "/projects/courant/full-site.webp",
-    conclusions: "MSMEs don't have facilities teams — they need a system that speaks plainly and responds before damage is done. Courant's identity was built around that contract. The mark distills the project's core tensions: technical precision softened by rounded, approachable forms. Yellow surfaces only where it matters — anomaly alerts, repair states, critical thresholds — doing organizational work across multiple devices rather than purely decorative. The goal was to make Isolation Forest and LLM-driven anomaly detection feel like a calm, confident assistant. Not a dashboard. Not a warning system. Just clarity, exactly when you need it.",
-    liveUrl: "https://courant.energy",
+      mindMap: {
+        nodes: `
+          Courant
+            Electricity
+              Lightbulb
+              Socket
+              I/O
+            Safety
+              Rounded Edges
+            Maintenance
+              Repair
+                Yellow
+            Power
+              Sustainability
+              Lightning
+                Bolt
+            Current
+          Electricity > Power
+          Electricity > Safety
+          Electricity > Maintenance
+          Power > Current
+          Lightning > Bolt
+          Repair > Yellow
+        `
+      },
+      fullPage: "/projects/courant/full-site.webp",
+      conclusions: "MSMEs don't have dedicated facilities engineers — they need a layout that speaks with absolute precision and surfaces errors before hardware damage occurs. Courant's design tokens were engineered around that reality. The logomark distills the system's underlying logic: high-frequency technical performance wrapped in structural, uniform boundaries. Color utility is purely algorithmic—functional yellow tokens trigger exclusively for anomaly thresholds, multi-tenant alert states, and hardware failures. The implementation successfully flattened complex LLM predictions and deep metrics into a clean, predictable utility dashboard.",
+      liveUrl: "https://courant.energy",
     },
     isSpotlight: true,  
   },
@@ -208,7 +207,7 @@ export const PROJECTS: Project[] = [
       "A massive digital transformation initiative for provincial government units. Bataeno Pass replaces manual, paper-based document processing with a unified, high-security barangay module. The system handles everything from automated document issuance (Barangay Clearance, Indigency) to complex household census data tracking, ensuring that local services are efficient, transparent, and data-backed.",
     aboutMobile:
       "A full-stack governmental module digitizing barangay operations, census tracking, and document issuance for provincial-scale efficiency.",
-    tags: ["Full-Stack", "System Design", "Database Design"],
+    tags: ["Full-Stack Engineering", "System Architecture", "Database Design"],
     keywords: ["Government Tech", "Public Service", "Data Security", "Digital Transformation"],
     technologies: ["Laravel", "Livewire", "Reverb", "Alpine.js", "MySQL", "Tailwind CSS", "Filament PHP"],
     tools: ["Atlassian Confluence", "DBDiagram.io"],
@@ -276,7 +275,6 @@ export const PROJECTS: Project[] = [
         "/projects/bataeno-pass/extra-13.webp",
         "/projects/bataeno-pass/extra-14.webp",
         "/projects/bataeno-pass/extra-15.webp",
-
       ],
     },
     isSpotlight: true,
@@ -286,12 +284,12 @@ export const PROJECTS: Project[] = [
     name: "Edmer Software Solutions",
     year: "2025",
     mission:
-      "Corporate identity and web presence for an experienced full-stack developer.",
+      "Corporate identity system and responsive interface constraints for a full-stack developer consultancy.",
     description:
-      "A personal branding project turned corporate identity. Edmer Software required a look that radiated technical authority while remaining approachable for B2B consulting. The resulting identity system uses sharp, geometric typography and a high-contrast palette to mirror the precision of the software development process itself.",
+      "A brand engineering initiative translated into a robust corporate architecture. Edmer Software required an integrated visual specification built to signal high technical competency for international enterprise engagements. The asset framework operates inside strict geometric layouts and deterministic contrast rules to mirror structural precision across software pipelines.",
     aboutMobile:
-      "A high-contrast identity system designed to project technical authority and precision for B2B software consulting.",
-    tags: ["Brand Identity"],
+      "A visual identity specification tracking geometric layouts and high-contrast styling boundaries for enterprise engineering consulting.",
+    tags: ["Visual Systems Architecture"],
     keywords: ["Corporate Identity", "Developer Branding", "Minimalism", "B2B"],
     tools: ["Figma", "Adobe Illustrator"],
     brandColor: "#0052cc",
@@ -307,13 +305,13 @@ export const PROJECTS: Project[] = [
       {
         fontFamily: "Plus Jakarta Sans",
         weights: ["ExtraBold", "Semibold", "Bold", "Regular", "Light", "ExtraLight"],
-        usage: "Brand Logotype, Heading, Body Text",
+        usage: "System Typography Specs",
         fontFile: "/projects/edmer-software/fonts/PlusJakartaSans-VariableFont_wght.ttf",
       },
       {
         fontFamily: "Chakra Petch",
         weights: ["Medium"],
-        usage: "CTA",
+        usage: "Action & Callout Interface Layer",
         fontFile: "/projects/edmer-software/fonts/ChakraPetch-Medium.ttf",
       },
     ],
@@ -334,8 +332,6 @@ export const PROJECTS: Project[] = [
         "/projects/edmer-software/color-applications.webp",
         "/projects/edmer-software/icon-comp-2.webp",
         "/projects/edmer-software/asset-1.webp",
-        
-
       ],
       showcase: {
         highlight: {
@@ -348,97 +344,97 @@ export const PROJECTS: Project[] = [
         ],
       },
       mindMap: {
-      nodes: `
-        Edmer Software Solutions
-          Expertise
-            Complete Solution
-              Integrated
-              Sense of completeness
-                Closed shape
-            Specialized Mastery
-              Focus
-            Authoritative
-          Scale
-            Global
-            End-to-end
-          Corporate Visuals
-            Negative Space
-            Clean Lines
-            Sophisticated
-            Modern and Minimalist
-            Kinetic Momentum
-              Motion cues
-          Reliability
-            Structural Integrity
-              Strict grid system
-              Architectural
-                Pillar
-                Foundation
-                Building Material
-                  Bricks
-                  Concrete
-            Technical Precision
-              Thin lines
-              High contrast
-              Focus
-                Crosshair
-                Target
-                Focus Frame
-          Innovation
-            Futuristic
-          Client-centric
-            Custom-built
+        nodes: `
+          Edmer Software Solutions
+            Expertise
+              Complete Solution
+                Integrated
+                Sense of completeness
+                  Closed shape
+              Specialized Mastery
+                Focus
+              Authoritative
+            Scale
+              Global
+              End-to-end
+            Corporate Visuals
+              Negative Space
+              Clean Lines
+              Sophisticated
+              Modern and Minimalist
+              Kinetic Momentum
+                Motion cues
+            Reliability
+              Structural Integrity
+                Strict grid system
+                Architectural
+                  Pillar
+                  Foundation
+                  Building Material
+                    Bricks
+                    Concrete
+              Technical Precision
+                Thin lines
+                High contrast
+                Focus
+                  Crosshair
+                  Target
+                  Focus Frame
+            Innovation
+              Futuristic
+            Client-centric
+              Custom-built
 
-          Expertise > Complete Solution
-          Complete Solution > Integrated
-          Complete Solution > Sense of completeness
-          Sense of completeness > Closed shape
-          Expertise > Specialized Mastery
-          Specialized Mastery > Focus
-          Expertise > Authoritative
-          Scale > Global
-          Scale > End-to-end
-          Corporate Visuals > Negative Space
-          Corporate Visuals > Clean Lines
-          Corporate Visuals > Sophisticated
-          Corporate Visuals > Modern and Minimalist
-          Corporate Visuals > Kinetic Momentum
-          Kinetic Momentum > Motion cues
-          Kinetic Momentum > Whitespace
-          Reliability > Structural Integrity
-          Structural Integrity > Strict grid system
-          Structural Integrity > Architectural
-          Architectural > Pillar
-          Architectural > Foundation
-          Architectural > Building Material
-          Building Material > Bricks
-          Building Material > Concrete
-          Reliability > Technical Precision
-          Technical Precision > Thin lines
-          Technical Precision > High contrast
-          Technical Precision > Focus
-          Focus > Crosshair
-          Focus > Target
-          Focus > Focus Frame
-          Innovation > Futuristic
-          Client-centric > Custom-built
-      `
+            Expertise > Complete Solution
+            Complete Solution > Integrated
+            Complete Solution > Sense of completeness
+            Sense of completeness > Closed shape
+            Expertise > Specialized Mastery
+            Specialized Mastery > Focus
+            Expertise > Authoritative
+            Scale > Global
+            Scale > End-to-end
+            Corporate Visuals > Negative Space
+            Corporate Visuals > Clean Lines
+            Corporate Visuals > Sophisticated
+            Corporate Visuals > Modern and Minimalist
+            Corporate Visuals > Kinetic Momentum
+            Kinetic Momentum > Motion cues
+            Kinetic Momentum > Whitespace
+            Reliability > Structural Integrity
+            Structural Integrity > Strict grid system
+            Structural Integrity > Architectural
+            Architectural > Pillar
+            Architectural > Foundation
+            Architectural > Building Material
+            Building Material > Bricks
+            Building Material > Concrete
+            Reliability > Technical Precision
+            Technical Precision > Thin lines
+            Technical Precision > High contrast
+            Technical Precision > Focus
+            Focus > Crosshair
+            Focus > Target
+            Focus > Focus Frame
+            Innovation > Futuristic
+            Client-centric > Custom-built
+        `
+      },
+      conclusions: "Through structured discovery, the brand's core architecture was mapped out: a high-efficiency solution framework engineered to deploy at the intersection of enterprise integration and modern full-stack web applications. The resulting visual schema ensures clear technical alignment across high-value B2B software engagements.",
     },
-    conclusions: "Through structured discovery, the brand's core position was defined: a specialized solution architect operating at the intersection of IoT and modern web development — a rare and defensible niche in the international market. The resulting identity system — grounded in structural integrity, technical precision, and kinetic momentum — translates that specialization into a visual language that feels engineered, intentional, and enterprise-ready. Every element, from logo symbolism to typographic direction, is built to signal the same thing: a developer who has outgrown the generalist label and is ready to compete for high-value, complex engagements.",
-    },
-    isSpotlight: true,
+    isSpotlight: false, // Hidden from core hero page rotation
   },
   {
     slug: "strawberry-sweets",
     name: "Strawberry Sweets",
     year: "2026",
     mission:
-      "Playful website featuring discography for an indie band based in Bataan.",
+      "Full-stack discography application deploying relational media schemas and a custom administrative content management pipeline.",
     description:
-      "Strawberry Sweets is an immersive web experience for an indie-pop band. Moving away from standard social media landing pages, this project focused on a 'discography-first' layout that encourages fans to explore the band's sonic history. The design features soft gradients, custom icons, and fluid transitions that capture the whimsical and nostalgic essence of the band's music.",
+      "A full-stack media platform engineered to catalog and distribute independent audio assets. Moving away from rigid, static information architectures, this application models a database relational structure to connect and query track listings, album groupings, lyrical string data, and localized streaming paths. I built an administrative portal with Filament PHP to govern strict upload parameters and automated asset mapping, matching a decoupled React frontend tailored for seamless track rendering.",
     aboutMobile:
-      "An immersive, discography-first web experience capturing the whimsical essence of a Bataan-based indie-pop band.",
-    tags: ["Web Design"],
+      "A full-stack application leveraging relational media modeling and integrated administrative dashboards for structured audio distribution.",
+    tags: ["Full-Stack Engineering", "Database Modeling", "Content Architecture"],
     keywords: ["Band Website", "Music Industry", "Immersive UX", "Discography"],
     tools: ["Adobe Illustrator"],
     technologies: ["Laravel", "React", "Tailwind CSS", "Filament PHP"],
@@ -460,19 +456,19 @@ export const PROJECTS: Project[] = [
         ],
       },
     },
-    
+    isSpotlight: true, // Re-activated for Core Hero spotlight loop
   },
   {
     slug: "imbento",
     name: "Imbento",
     year: "2025",
     mission:
-      "Inventing a brand identity as playful and original as the concept itself.",
+      "Custom procedural layout mechanics and strict spatial packaging system built from modular vectors.",
     description:
-      "Imbento — rooted in the Filipino spirit of invention — needed a visual identity that lived up to its name. The lettermark was built from scratch: no single typeface, just shapes, custom tweaks, and dynamic forms that give the wordmark a personality flexible enough to stretch across every surface. The packaging system balances clean structure with room for pattern and storytelling, turning every box into a brand touchpoint.",
+      "Imbento required an analytical blueprint for custom typography and packaging variables. The visual engine was assembled programmatically without standard off-the-shelf typefaces; instead, it utilizes strict geometric shapes, custom vector properties, and responsive layout scaling. The resulting packaging asset ruleset coordinates dynamic structural repeats and scalable assets across complex physical configurations.",
     aboutMobile:
-      "A from-scratch lettermark and packaging system built around the Filipino spirit of invention — playful, flexible, and designed to tell a story on every surface.",
-    tags: ["Brand Identity"],
+      "A mathematical visual framework and strict parametric packaging matrix built around modular structural vectors.",
+    tags: ["Visual Systems Architecture"],
     keywords: ["Wordmark", "Lettermark", "Filipino Brand", "Food Branding", "Custom Typography"],
     tools: ["Adobe Illustrator", "Adobe Photoshop"],
     brandColor: "#FF6358",
@@ -485,7 +481,7 @@ export const PROJECTS: Project[] = [
       {
         fontFamily: "Urbanist",
         weights: ["Bold"],
-        usage: "Brand Logotype",
+        usage: "Parametric System Wordmark Anchor",
         fontFile: "/projects/imbento/fonts/urbanist.ttf",
       },
     ],
@@ -504,7 +500,7 @@ export const PROJECTS: Project[] = [
       ],
       sketches: ["/projects/imbento/sketch.webp"],
       vectorization: ["/projects/imbento/logotype-comp.svg"],
-      extras:[
+      extras: [
         "/projects/imbento/tape.webp",
         "/projects/imbento/pattern.webp",
         "/projects/imbento/sample-post.webp",
@@ -521,38 +517,38 @@ export const PROJECTS: Project[] = [
         ],
       },
       mindMap: {
-      nodes: `
-        Imbento
-          Invented
-            Playful
-            Original
-            Idea
-              Exclamation Point
-          Improvised
-            Spontaneous
-              Surprising
-            Hand-crafted
-              Custom logotype
-            Freestyle
-              Shape variety
-                Bento/Grid
-            
-        Invented > Playful
-        Invented > Original
-        Invented > Idea
-        Idea > Exclamation Point
-        Improvised > Spontaneous
-        Spontaneous > Surprising
-        Surprising > Exclamation Point
-        Improvised > Hand-crafted  
-        Hand-crafted > Custom logotype
-        Improvised > Freestyle
-        Freestyle > Shape variety
-        Shape variety > Bento/Grid     
-      `
+        nodes: `
+          Imbento
+            Invented
+              Playful
+              Original
+              Idea
+                Exclamation Point
+            Improvised
+              Spontaneous
+                Surprising
+              Hand-crafted
+                Custom logotype
+              Freestyle
+                Shape variety
+                  Bento/Grid
+              
+          Invented > Playful
+          Invented > Original
+          Invented > Idea
+          Idea > Exclamation Point
+          Improvised > Spontaneous
+          Spontaneous > Surprising
+          Surprising > Exclamation Point
+          Improvised > Hand-crafted  
+          Hand-crafted > Custom logotype
+          Improvised > Freestyle
+          Freestyle > Shape variety
+          Shape variety > Bento/Grid     
+        `
+      },
+      conclusions: "Imbento serves as a comprehensive case study in applying systematic parametric asset boundaries to consumer tangible pipelines.",
     },
-      conclusions: "Imbento isn't just a food brand — it's a proof of concept that everyday packaging can carry genuine creative weight.",
-    },
-    isSpotlight: true,
+    isSpotlight: false, // Hidden from core hero page rotation
   },
 ];

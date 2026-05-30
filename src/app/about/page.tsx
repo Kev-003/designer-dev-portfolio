@@ -238,10 +238,11 @@ export default function AboutPage() {
           ref={(el) => {
             textRefs.current[1] = el;
           }}
-          className="text-xl md:text-3xl font-light text-zinc-500 dark:text-zinc-400 max-w-3xl leading-relaxed"
+          className="text-xl md:text-3xl font-light text-zinc-500 dark:text-zinc-400 max-w-3xl leading-relaxed mt-30 md:mt-0"
         >
-          I blur the lines between design and engineering to build digital
-          experiences that feel alive.
+          I build complete digital products — from data model to deployed
+          interface — for teams that need one person who can own the whole
+          thing.
         </p>
       </header>
 
@@ -265,16 +266,17 @@ export default function AboutPage() {
             <h3 className="text-2xl font-medium tracking-tight">The Story</h3>
             <div className="text-zinc-600 dark:text-zinc-400 font-light leading-relaxed space-y-4">
               <p>
-                With a background in both visual design and frontend
-                development, I approach every project with a dual mindset. I
-                believe that the best products are built when aesthetics and
-                performance are treated with equal importance.
+                My process starts before the first component. I sit with the
+                problem, figure out what the data should look like, where the
+                logic breaks down, and how to close every loophole in the model
+                — then I build. With a background across visual design, frontend
+                engineering, and backend systems, I treat aesthetics and
+                architecture as the same problem viewed from different angles.
               </p>
               <p>
-                When I&apos;m not pushing pixels or writing logic, you can
-                usually find me exploring new interactive libraries, diving into
-                creative coding, or continuously refining my craft to build
-                immersive interfaces.
+                When I&apos;m not building, I&apos;m usually exploring how
+                systems fail — in code, in design, in process — and figuring out
+                why.
               </p>
             </div>
           </div>

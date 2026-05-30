@@ -170,10 +170,10 @@ export default function ProjectsPage() {
     <main className="min-h-screen bg-zinc-950 pt-32 pb-20">
       {/* Header */}
       <section className="px-6 md:px-20 mb-16 md:mb-24">
-        <span className="font-mono text-[11px] tracking-[0.3em] text-brand uppercase block mb-4">
+        <span className="font-mono text-[11px] tracking-[0.3em] text-brand uppercase block mb-0 lg:mb-4">
           Selected Works
         </span>
-        <div className="relative h-[200px] md:h-[300px] w-full -ml-3 mt-10 overflow-visible">
+        <div className="relative w-full h-[100px] md:h-[260px] lg:h-[300px] ml-0 md:-ml-3 mt-0 md:mt-4 lg:mt-6 mb-8 md:mb-12 overflow-visible">
           {isMounted && (
             <TextPressure
               text="portfolio"
@@ -185,7 +185,7 @@ export default function ProjectsPage() {
         </div>
 
         {/* Filter Bar */}
-        <div className="flex flex-wrap gap-3 mt-12 md:mt-16 border-b border-zinc-800 pb-8">
+        <div className="flex flex-wrap gap-3 mt-12 md:mt-16 border-b border-zinc-800 pb-8 ">
           <button
             onClick={() => setSelectedTag(null)}
             className={`px-5 py-2 rounded-full font-mono text-[11px] uppercase tracking-widest border transition-all ${

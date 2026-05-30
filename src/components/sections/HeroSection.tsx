@@ -7,8 +7,8 @@ import { IsometricSwitcher } from "@/components/ui/hero/IsometricSwitcher";
 import gsap from "gsap";
 
 const HEADLINES = {
-  experience: { text: "Architecting the story." },
-  engineering: { text: "Engineering the reality." },
+  experience: { text: "System Before Interface" },
+  engineering: { text: "Spec to Production" },
 };
 
 // Simplified MorphHeadline
@@ -90,9 +90,9 @@ type Props = {
 
 const DESCRIPTIONS = {
   experience:
-    "I don't just design interfaces; I architect how people feel and flow through a narrative. My deepest expertise lies in heavy interaction design and high-stakes visual storytelling.",
+    "I figure out how it should work. Then I build it — schema to deployment, with enough design fluency to never need a handoff.",
   engineering:
-    "I write the expressive, resilient code that makes deep interactions possible. From precise custom animations to scalable systems, I bring the craft of purposeful design into the logic of development.",
+    "I figure out how it should work. Then I build it — schema to deployment, with enough design fluency to never need a handoff.",
 };
 
 export function HeroSection({ mode = "experience", onModeChange }: Props) {
