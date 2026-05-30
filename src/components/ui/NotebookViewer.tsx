@@ -264,6 +264,9 @@ export default function NotebookViewer({
     );
   }
 
+  // EXPLICIT TYPE GUARD: Forces TypeScript to know state is purely "success" below this line.
+  if (state.status !== "success") return null;
+
   return (
     <div className="flex flex-col">
       {state.cells.map((cell, i) => (
