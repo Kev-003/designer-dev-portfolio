@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, X, ExternalLink } from "lucide-react";
+import { ArrowLeft, X, ExternalLink, Code2 } from "lucide-react";
 import gsap from "gsap";
 import {
   LAB_ITEMS,
@@ -14,6 +14,7 @@ import {
   type LabType,
 } from "@/lib/lab";
 import NotebookViewer from "@/components/ui/NotebookViewer";
+import { CodeHighlighter } from "@/components/ui/CodeHighlighter";
 
 // ─── Glitch Text ──────────────────────────────────────────────────────────────
 
@@ -222,6 +223,8 @@ function LabLightbox({
   const [notebookIndex, setNotebookIndex] = useState(0);
 
   const isNotebook = item.media.kind === "notebook";
+  // Widen panel if it contains structured programmatic context like notebooks or code snippets
+  const panelWidth = isNotebook || item.content ? "max-w-4xl" : "max-w-2xl";
 
   useEffect(() => {
     gsap.fromTo(
@@ -269,9 +272,6 @@ function LabLightbox({
         ? [item.media.url]
         : [];
 
-  // Notebook panel is wider to give the cells room to breathe
-  const panelWidth = isNotebook ? "max-w-4xl" : "max-w-2xl";
-
   return (
     <div
       ref={overlayRef}
@@ -279,8 +279,9 @@ function LabLightbox({
       onClick={handleClose}
     >
       <div
+        box-id="lightbox-panel"
         ref={panelRef}
-        className={`relative w-full ${panelWidth} bg-zinc-950 border border-zinc-800/50 rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl max-h-[85vh] md:max-h-[90vh] flex flex-col`}
+        className={`relative w-full ${panelWidth} bg-zinc-950 border border-zinc-800/50 rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl max-h-[85vh] md:max-h-[90vh] flex flex-col transition-all duration-300`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -299,7 +300,7 @@ function LabLightbox({
         </div>
 
         {/* Scrollable body */}
-        <div className="overflow-y-auto flex-1">
+        <div className="overflow-y-auto flex-1el">
           {/* Video */}
           {item.media.kind === "video" && (
             <div className="aspect-video bg-zinc-900">
@@ -386,7 +387,7 @@ function LabLightbox({
               </div>
             )}
 
-            {/* Extra links (e.g. second notebook) */}
+            {/* Extra links */}
             {item.links && item.links.length > 0 && (
               <div className="flex flex-col gap-2 pt-2">
                 <span className="font-mono text-[9px] uppercase tracking-widest text-zinc-600">
@@ -418,6 +419,59 @@ function LabLightbox({
                 <ExternalLink size={12} />
                 {(item.media as { label?: string }).label ?? "Open Link"}
               </a>
+            )}
+
+            {/* Storytelling Content Renderer */}
+            {item.content && item.content.length > 0 && (
+              <div className="mt-8 flex flex-col gap-10 border-t border-zinc-800 pt-8">
+                {item.content.map((block, i) => (
+                  <div key={i} className="flex flex-col gap-4">
+                    {block.title && (
+                      <h3 className="text-white text-lg font-semibold tracking-tight">
+                        {block.title}
+                      </h3>
+                    )}
+                    {block.text && (
+                      <div className="text-zinc-300 text-sm leading-relaxed space-y-4">
+                        {block.text.split("\n\n").map((para, pIdx) => (
+                          <p key={pIdx}>{para}</p>
+                        ))}
+                      </div>
+                    )}
+                    {block.codeSnippets && block.codeSnippets.length > 0 && (
+                      <div className="flex flex-col gap-6 mt-2">
+                        {block.codeSnippets.map((snippet, idx) => (
+                          <div key={idx} className="flex flex-col gap-3">
+                            {snippet.description && (
+                              <p className="text-zinc-400 text-sm leading-relaxed italic border-l-2 border-zinc-700 pl-3 py-0.5">
+                                {snippet.description}
+                              </p>
+                            )}
+                            <div className="flex flex-col rounded-xl border border-zinc-800/80 bg-zinc-900/10 overflow-hidden">
+                              {/* Editor Top Bar Header */}
+                              <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-900/70 border-b border-zinc-800/80 font-mono text-xs text-zinc-400 select-none">
+                                <div className="flex items-center gap-2.5">
+                                  <Code2 size={13} className="text-zinc-500" />
+                                  <span className="tracking-wide text-zinc-300 font-medium">
+                                    {snippet.title}
+                                  </span>
+                                </div>
+                                <span className="text-[10px] uppercase text-zinc-600 tracking-widest font-bold">
+                                  {snippet.lang}
+                                </span>
+                              </div>
+                              {/* Scrollable Code Area */}
+                              <div className="p-5 overflow-x-auto max-h-[28rem] bg-zinc-950/60 custom-scrollbar">
+                                <CodeHighlighter code={snippet.snippet} lang={snippet.lang} />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             )}
           </div>
 
