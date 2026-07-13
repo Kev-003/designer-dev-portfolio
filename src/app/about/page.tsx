@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowUpRight } from "lucide-react";
@@ -15,6 +16,30 @@ export default function AboutPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const photoRef = useRef<HTMLDivElement>(null);
   const textRefs = useRef<(HTMLElement | null)[]>([]);
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  const aboutPhotos = [
+    "/about/about_1.jpg",
+    "/about/about_2.jpg",
+    "/about/about_3.jpg",
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % aboutPhotos.length);
+    }, 4500);
+    return () => clearInterval(interval);
+  }, [aboutPhotos.length]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!photoRef.current) return;
+    const rect = photoRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setMousePos({ x: x * 15, y: y * 15 });
+  };
 
   // Real resume data
   const skills = [
@@ -252,13 +277,54 @@ export default function AboutPage() {
           <div
             ref={photoRef}
             onMouseEnter={handlePhotoHover}
-            onMouseLeave={handlePhotoLeave}
-            className="relative w-full max-w-sm aspect-[4/5] bg-zinc-100 dark:bg-[#111] rounded-2xl overflow-hidden cursor-crosshair transform-gpu border border-zinc-200 dark:border-zinc-800 shadow-xl"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={() => {
+              handlePhotoLeave();
+              setMousePos({ x: 0, y: 0 });
+            }}
+            className="relative w-full max-w-sm aspect-[2/3] bg-zinc-100 dark:bg-[#111] rounded-2xl overflow-hidden cursor-crosshair transform-gpu border border-zinc-200 dark:border-zinc-800 shadow-xl"
           >
-            {/* Placeholder for Photo - Replace this div with an actual <Image /> tag when ready */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-600 font-mono text-sm tracking-widest border-2 border-dashed border-zinc-300 dark:border-zinc-700 m-4 rounded-xl transition-all duration-300 hover:border-brand hover:text-brand">
-              <span className="mb-2">📸</span>
-              <span>[ INSERT PHOTO ]</span>
+            <div
+              className="flex h-full w-full"
+              style={{
+                transform: `translate3d(-${currentImageIndex * 100}%, 0, 0)`,
+                transition: "transform 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
+              }}
+            >
+              {aboutPhotos.map((src, index) => (
+                <div
+                  key={src}
+                  className="relative w-full h-full flex-shrink-0 overflow-hidden"
+                >
+                  <div
+                    className="absolute inset-y-0 w-[calc(100%+60px)] -left-[30px]"
+                    style={{
+                      transform: `translate3d(${(currentImageIndex - index) * 30}px, 0, 0)`,
+                      transition:
+                        "transform 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
+                    }}
+                  >
+                    <Image
+                      src={src}
+                      alt={`Kevern - About Photo ${index + 1}`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 384px"
+                      priority={index === 0}
+                      className="object-cover"
+                      style={{
+                        transform:
+                          index === currentImageIndex
+                            ? `scale(1.03) translate(${mousePos.x}px, ${mousePos.y}px)`
+                            : `scale(1.0) translate(0px, 0px)`,
+                        transition:
+                          index === currentImageIndex
+                            ? "transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+                            : "transform 0.8s ease-out",
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
