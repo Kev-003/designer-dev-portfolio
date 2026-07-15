@@ -1,0 +1,206 @@
+# Worship Tools
+
+### A PowerPoint Add-In for Worship Presentation
+
+Worship Tools is a VSTO-based PowerPoint add-in that streamlines worship service preparation. It provides a sidebar for searching and inserting song lyrics onto slides, and a Bible verse fetcher that pulls scripture directly from a local API and inserts them as individual slides.
+
+---
+
+## Features
+
+- **Live Song Search** — search CCM and Hymn libraries simultaneously as you type, with results grouped by category
+- **One-click Lyric Insertion** — double-click a song to insert all its lyric blocks as individual slides
+- **Edit & Delete Songs** — right-click any search result to edit its title/category/lyrics or delete it, with the search list refreshing automatically
+- **Bible Verse Insertion** — fetch individual verses, verse ranges, or entire chapters by book, chapter, and version
+- **Multi-version Support** — includes NIV, KJV, NLT, ESV, NKJV, Filipino versions (MBB05, ASND), French versions, and many more
+- **Add New Songs** — save new songs directly from the add-in into the correct library folder, through a resizable dialog that adapts to your display's text scaling
+- **Toast Notifications** — a floating, auto-dismissing notification appears at the top-right of the sidebar to confirm saves, deletes, and verse-fetch progress, instead of a modal message box you have to close
+- **Custom Layout Support** — uses your slide master's `Lyrics` and `Verse` layouts when available, falls back to default textboxes automatically
+
+---
+
+## Requirements
+
+- Windows PC (no Mac support)
+- Microsoft PowerPoint (Office 2016 or later recommended)
+- Internet access on first install (for prerequisite downloads)
+- .NET Framework 4.8
+- Visual Studio Tools for Office Runtime (VSTO)
+
+---
+
+## Installation
+
+### Step 1 — Run `install.bat` as Administrator
+
+Right-click `install.bat` and select **Run as administrator**. This handles certificate trust and add-in registration automatically.
+
+### Step 2 — Allow the Node App
+
+When PowerPoint opens after installation, a prompt will appear asking permission to run a background process. **Allow it.** This is the `YouVersion.exe` Bible API launching on `localhost:3000` — it is required for scripture fetching to work. It runs silently in the background and is automatically stopped when PowerPoint closes.
+
+---
+
+## File Structure
+
+After installation, your data folder lives at:
+
+```
+%APPDATA%\Worship Tools\
+├── YouVersion.exe          ← Bible API (bundled, launched automatically)
+└── Library\
+    ├── Song Title.txt      ← CCM songs go here
+    └── Hymns\
+        └── Hymn Title.txt  ← Hymns go here
+```
+
+---
+
+## Song File Format
+
+Song files are plain `.txt` files. Each **blank line** creates a new slide.
+
+```
+Verse 1 line 1
+Verse 1 line 2
+
+Chorus line 1
+Chorus line 2
+
+Bridge line 1
+Bridge line 2
+```
+
+Each paragraph between blank lines becomes its own slide. Both Windows (`\r\n`) and Unix (`\n`) line endings are supported, so files from lyric scrapers work without modification.
+
+---
+
+## Slide Layouts
+
+### Default Behavior
+
+Out of the box, Worship Tools creates slides using plain textboxes — no setup required. Lyrics and verses will be inserted and readable on any presentation.
+
+### Using Your Own Design
+
+If you have a custom PowerPoint template and want slides to match your design, add named layouts to your slide master:
+
+**For song lyrics — create a layout named `Lyrics`:**
+
+- Must have one **Title placeholder** — receives the song name
+- Must have one **Body/Content placeholder** — receives the lyric block
+
+**For Bible verses — create a layout named `Verse`:**
+
+- Must have at least **two regular placeholders** (not title)
+- First body placeholder receives the **verse passage**
+- Second placeholder (subtitle) receives the **citation** (e.g. John 3:16)
+
+**To add these layouts:**
+
+1. Open your PowerPoint template
+2. Go to **View → Slide Master**
+3. Right-click an existing layout → **Duplicate Layout**
+4. Add/arrange placeholders as described above
+5. Right-click the layout → **Rename Layout**
+6. Name it exactly `Lyrics` or `Verse` (case-insensitive)
+7. Save the template
+
+If neither layout is found, the add-in falls back to plain textboxes automatically — nothing breaks.
+
+---
+
+## Using the Add-In
+
+### Opening the Sidebar
+
+The **Worship Tools** sidebar opens automatically when PowerPoint loads. If you close it, find the toggle button in the **Worship Tools** ribbon tab.
+
+---
+
+### Inserting Song Lyrics
+
+1. Click the **Search Songs** textbox at the top of the sidebar
+2. Start typing — results appear immediately, grouped into **CCM** and **Hymns**
+3. **Double-click** a result or press **Enter** to insert all lyric blocks as slides
+4. Results marked with `~` matched from lyric content, not the title
+5. Click anywhere outside the list to dismiss it
+
+---
+
+### Adding a New Song
+
+1. Click the **Add Song** button
+2. Enter the **song title** — this becomes the filename
+3. Select **CCM** or **Hymn** category
+4. Paste or type the lyrics — separate slides with a blank line
+5. Click **Save**
+
+The song appears in search immediately after saving.
+
+---
+
+### Editing or Deleting a Song
+
+1. Find the song in **Search Songs**
+2. **Right-click** the result to open the Edit/Delete menu
+3. **Edit** opens the same dialog as Add Song, pre-filled with the song's current title, category, and lyrics — change what you need and click **Save**
+4. **Delete** asks for confirmation, then removes the `.txt` file and refreshes the list
+
+A toast notification confirms the result of either action.
+
+---
+
+### Inserting Bible Verses
+
+1. In the **Scripture** section of the sidebar:
+2. **Version** — type to search (e.g. `NIV`, `Filipino`, `KJV`) and click a result
+3. **Book** — type to search (e.g. `John`, `GEN`) and click a result
+4. **Chapter** — type the chapter number
+5. **Verses** — supports:
+   - Single verse: `16`
+   - Range: `16-18`
+   - Multiple: `1,3,5`
+   - Mixed: `1-3,5,7-9`
+   - Leave **empty** to insert the entire chapter, fetched and inserted one verse at a time
+6. Click **Insert Verse**
+
+Each verse becomes its own slide — including when fetching a whole chapter. A toast notification tracks progress (e.g. `Fetching John 3:5...`) and confirms when finished.
+
+---
+
+## Supported Bible Versions
+
+| Language | Versions                                                                           |
+| -------- | ---------------------------------------------------------------------------------- |
+| English  | NIV, KJV, NLT, ESV, NKJV, ASV, AMP, CSB, NASB, MSG, NET, RSV, WEBUS, and many more |
+| Filipino | MBB05, ASND (Ang Salita ng Diyos), TLAB (Ang Biblia 1905), FFB                     |
+| French   | LSG, S21, NEG79                                                                    |
+
+---
+
+## Troubleshooting
+
+**Bible verses not fetching**
+→ The Node app did not get permission to run on install. Open `%APPDATA%\Worship Tools\` and double-click `YouVersion.exe` manually to grant it permission, then restart PowerPoint.
+
+**Songs saving to wrong folder**
+→ Confirm your Library folder exists at `%APPDATA%\Worship Tools\Library\`. The add-in creates it automatically on first run but requires the correct permissions.
+
+**Lyrics all appear on one slide**
+→ Your `.txt` file has no blank lines between sections. Ensure there is a fully empty line between each lyric block.
+
+**Sidebar not showing**
+→ Go to **File → Options → Add-ins → COM Add-ins → Go** and confirm Worship Tools is checked. Tick it and click OK if it isn't.
+
+**Whole-chapter fetch is slow**
+→ Fetching an entire chapter makes one API call per verse in sequence (the same call used for individual verses), so longer chapters take longer. Watch the toast notification — if the verse number it's showing keeps advancing, it's still working, not stuck.
+
+**Slides don't match my design**
+→ Your slide master is missing the `Lyrics` or `Verse` layout. Follow the layout setup instructions above.
+
+---
+
+## License
+
+Internal use. All rights reserved.

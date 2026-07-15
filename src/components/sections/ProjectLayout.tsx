@@ -16,6 +16,8 @@ import {
   Volume2,
   VolumeX,
   ArrowUpRight,
+  Copy,
+  Check,
 } from "lucide-react";
 // import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import dynamic from "next/dynamic";
@@ -25,7 +27,7 @@ const DotLottieReact = dynamic(
 );
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import type { Project } from "@/lib/projects";
+import type { Project, ProjectContentBlock } from "@/lib/projects";
 import { ProjectTag } from "@/components/ui/ProjectTag";
 //import { MindMap } from "../ui/MindMap";
 const MindMap = dynamic(() => import("../ui/MindMap").then((m) => m.MindMap), {
@@ -242,6 +244,348 @@ function DocumentationSection({
           </Link>
         ))}
       </div>
+    </section>
+  );
+}
+
+// ─── Story Section (build narrative + code) ──────────────────────────────────
+//
+// "How It Was Made" splits project.content into two distinct treatments so a
+// long, prose-heavy write-up doesn't repeat the same header block five times:
+//   1. Narrative beats (title + text, no code) render as an alternating
+//      vertical timeline — a real spine with numbered nodes, not a stacked
+//      list of identical two-column headers.
+//   2. Beats that carry codeSnippets render as a single tabbed code panel —
+//      one file switcher instead of three long blocks stacked on top of
+//      each other.
+
+function useScrollReveal<T extends HTMLElement>(
+  options: { y?: number; delay?: number } = {},
+) {
+  const ref = useRef<T>(null);
+
+  useLayoutEffect(() => {
+    if (typeof window === "undefined" || !ref.current) return;
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (reduceMotion) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ref.current,
+        { opacity: 0, y: options.y ?? 24 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          delay: options.delay ?? 0,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ref.current,
+            start: "top 88%",
+            once: true,
+          },
+        },
+      );
+    }, ref);
+
+    return () => ctx.revert();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return ref;
+}
+
+/**
+ * StoryStack — the narrative beats pin and physically stack on top of each
+ * other as the reader scrolls (desktop only; mobile gets a simple stacked
+ * fade-in, see the matchMedia split below). Each beat is a full compositional
+ * moment: an oversized ghost numeral, alternating side-to-side so the eye
+ * doesn't settle into one rhythm, with the previous card visibly shrinking
+ * and dimming as the next one arrives — the actual motion payoff of reading
+ * a build story beat by beat, not five identical header rows.
+ */
+function StoryStack({ beats }: { beats: ProjectContentBlock[] }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (typeof window === "undefined" || !containerRef.current) return;
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (reduceMotion) return;
+
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
+
+      // Inside StoryStack component -> useLayoutEffect -> mm.add("(min-width: 800px)", ...
+
+      mm.add("(min-width: 800px)", () => {
+        const cards = gsap.utils.toArray<HTMLElement>(".story-card");
+        cards.forEach((card, i) => {
+          if (i === cards.length - 1) return;
+
+          ScrollTrigger.create({
+            trigger: card,
+            start: "top top",
+            endTrigger: cards[cards.length - 1],
+            end: "top top",
+            pin: true,
+            pinSpacing: false,
+          });
+
+          // Smoothly fade out to 0 and hide completely as the next card arrives
+          gsap.to(card, {
+            scale: 0.94,
+            autoAlpha: 0, // 👈 Replaced 'opacity: 0.3' with 'autoAlpha: 0'
+            ease: "none",
+            scrollTrigger: {
+              trigger: cards[i + 1],
+              start: "top bottom",
+              end: "top center",
+              scrub: true,
+            },
+          });
+        });
+      });
+
+      mm.add("(max-width: 799px)", () => {
+        gsap.utils.toArray<HTMLElement>(".story-card").forEach((card) => {
+          gsap.fromTo(
+            card,
+            { opacity: 0, y: 20 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              ease: "power3.out",
+              scrollTrigger: { trigger: card, start: "top 88%", once: true },
+            },
+          );
+        });
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div ref={containerRef} className="relative">
+      {beats.map((beat, i) => {
+        const padded = String(i + 1).padStart(2, "0");
+        const align = i % 2 === 0 ? "left" : "right";
+        const tinted = i % 2 === 1;
+
+        const numeral = (
+          <div
+            className={`relative shrink-0 ${
+              align === "left" ? "md:order-1" : "md:order-2"
+            }`}
+          >
+            <span className="block text-[110px] md:text-[200px] leading-none font-extrabold text-zinc-800/25 select-none">
+              {padded}
+            </span>
+            <span className="absolute -bottom-2 left-1 w-10 h-1 rounded-full bg-brand" />
+          </div>
+        );
+
+        const copy = (
+          <div
+            className={`max-w-lg ${align === "left" ? "md:order-2" : "md:order-1"}`}
+          >
+            {beat.title && (
+              <h3 className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-5 leading-[1.05]">
+                {beat.title}
+              </h3>
+            )}
+            <p className="text-zinc-400 text-base md:text-lg leading-relaxed">
+              {beat.text}
+            </p>
+          </div>
+        );
+
+        return (
+          <div
+            key={i}
+            className={`story-card relative md:sticky md:top-0 w-full flex items-center border-t border-zinc-800 first:border-t-0 px-6 md:px-20 py-16 md:py-0 md:h-[82vh] ${
+              tinted ? "bg-zinc-900/40" : "bg-zinc-950"
+            }`}
+          >
+            {tinted && (
+              <div className="absolute inset-0 bg-brand/[0.04] pointer-events-none" />
+            )}
+            <div className="relative w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 md:gap-16 items-center">
+              {numeral}
+              {copy}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function CodeTab({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-3.5 py-2 rounded-lg font-mono text-xs transition-colors ${
+        active
+          ? "bg-zinc-800 text-white"
+          : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
+function CodeDeepDive({ block }: { block: ProjectContentBlock }) {
+  const snippets = block.codeSnippets ?? [];
+  const [active, setActive] = useState(0);
+  const [copied, setCopied] = useState(false);
+  const codeRef = useRef<HTMLDivElement>(null);
+  const containerRef = useScrollReveal<HTMLDivElement>({ y: 16 });
+
+  const current = snippets[active];
+
+  useEffect(() => {
+    if (!codeRef.current) return;
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
+    gsap.fromTo(
+      codeRef.current,
+      { opacity: 0, y: 6 },
+      { opacity: 1, y: 0, duration: 0.25, ease: "power2.out" },
+    );
+  }, [active]);
+
+  const handleCopy = async () => {
+    if (!current) return;
+    try {
+      await navigator.clipboard.writeText(current.snippet);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // Clipboard API unavailable — fail silently, copy button stays inert
+    }
+  };
+
+  if (!current) return null;
+
+  return (
+    <div
+      ref={containerRef}
+      className="rounded-2xl border border-zinc-800 bg-zinc-900/40 overflow-hidden"
+    >
+      {(block.title || block.text) && (
+        <div className="px-6 md:px-8 pt-8 pb-6 border-b border-zinc-800">
+          {block.title && (
+            <h3 className="text-2xl md:text-3xl font-bold text-white tracking-tight mb-3">
+              {block.title}
+            </h3>
+          )}
+          {block.text && (
+            <p className="text-zinc-400 leading-relaxed max-w-2xl">
+              {block.text}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* File tabs */}
+      <div className="flex flex-wrap gap-1.5 px-4 md:px-6 pt-4">
+        {snippets.map((s, i) => (
+          <CodeTab
+            key={i}
+            label={s.title ?? `snippet-${i + 1}`}
+            active={i === active}
+            onClick={() => setActive(i)}
+          />
+        ))}
+      </div>
+
+      {/* Active snippet */}
+      <div className="p-4 md:p-6">
+        <div className="flex items-center justify-between gap-4 mb-3">
+          {current.description ? (
+            <p className="text-sm text-zinc-500">{current.description}</p>
+          ) : (
+            <span />
+          )}
+          <button
+            onClick={handleCopy}
+            className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-200 transition-colors shrink-0"
+          >
+            {copied ? <Check size={13} /> : <Copy size={13} />}
+            {copied ? "Copied" : "Copy"}
+          </button>
+        </div>
+        <div
+          ref={codeRef}
+          className="rounded-xl border border-zinc-800 bg-zinc-950 overflow-x-auto"
+        >
+          <pre className="px-5 py-4 text-[12.5px] leading-relaxed text-zinc-300 font-mono">
+            <code>{current.snippet}</code>
+          </pre>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StorySection({
+  blocks,
+}: {
+  blocks: ProjectContentBlock[];
+  projectName: string;
+}) {
+  if (!blocks?.length) return null;
+
+  const narrativeBeats = blocks.filter(
+    (b) => b.text && (!b.codeSnippets || b.codeSnippets.length === 0),
+  );
+  const codeBeats = blocks.filter(
+    (b) => b.codeSnippets && b.codeSnippets.length > 0,
+  );
+
+  return (
+    <section className="bg-zinc-950 border-t border-zinc-800 py-20 md:py-28">
+      <div className="mb-16 md:mb-24 max-w-2xl px-6 md:px-20">
+        <span className="font-mono text-[11px] tracking-[0.2em] text-zinc-600 uppercase block mb-4">
+          The Build
+        </span>
+        <h2 className="text-3xl md:text-5xl font-extrabold text-zinc-100 tracking-tight">
+          How It Was Made
+        </h2>
+      </div>
+
+      {narrativeBeats.length > 0 && (
+        <div
+          className={`relative ${codeBeats.length > 0 ? "mb-20 md:mb-28" : ""}`}
+        >
+          <StoryStack beats={narrativeBeats} />
+        </div>
+      )}
+
+      {codeBeats.length > 0 && (
+        <div className="flex flex-col gap-10 max-w-4xl mx-auto px-6 md:px-20">
+          {codeBeats.map((block, i) => (
+            <CodeDeepDive key={i} block={block} />
+          ))}
+        </div>
+      )}
     </section>
   );
 }
@@ -827,6 +1171,7 @@ export function ProjectLayout({ project }: { project: Project }) {
     brandColors,
     brandColor,
     typography,
+    content,
     assets,
   } = project;
 
@@ -1157,6 +1502,11 @@ export function ProjectLayout({ project }: { project: Project }) {
           )}
         </div>
       </section>
+
+      {/* ── Build Story (prose + code, for engineering-heavy projects) ─── */}
+      {content && content.length > 0 && (
+        <StorySection blocks={content} projectName={name} />
+      )}
 
       {/* ── Showcase ──────────────────────────────────────────────────── */}
       {assets.showcase && (

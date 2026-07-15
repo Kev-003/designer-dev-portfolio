@@ -43,7 +43,7 @@ export function FloatingCTA() {
       {isCollapsed ? (
         <button
           onClick={() => setIsCollapsed(false)}
-          className="w-14 h-14 bg-brand text-zinc-950 rounded-full flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-transform"
+          className="w-14 h-14 bg-brand text-zinc-100 rounded-full flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-transform"
           aria-label="Show Contact Form"
         >
           <Mail size={24} />
@@ -67,7 +67,7 @@ export function FloatingCTA() {
             </p>
             <a
               href="mailto:kevern.design@gmail.com"
-              className="mt-2 inline-flex w-full items-center justify-center gap-2 px-5 py-3 bg-brand text-zinc-950 text-sm font-semibold rounded-full hover:brightness-110 active:scale-95 transition-all shadow-md"
+              className="mt-2 inline-flex w-full items-center justify-center gap-2 px-5 py-3 bg-brand text-zinc-100 text-sm font-semibold rounded-full hover:brightness-110 active:scale-95 transition-all shadow-md"
             >
               <Mail size={16} />
               Let&apos;s Talk

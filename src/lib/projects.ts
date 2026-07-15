@@ -55,6 +55,23 @@ export type ProjectAssets = {
   }[];
 };
 
+/**
+ * A single narrative beat in a project's build story — used for engineering-
+ * heavy projects (e.g. desktop tools, automation) where the interesting part
+ * is the *how* and *why*, not just the final visual output. Optionally carries
+ * one or more code snippets to illustrate the implementation.
+ */
+export type ProjectContentBlock = {
+  title?: string;
+  text?: string;
+  codeSnippets?: {
+    title?: string;
+    description?: string;
+    snippet: string;
+    lang: string;
+  }[];
+};
+
 export type Project = {
   slug: string;
   name: string;
@@ -88,7 +105,13 @@ export type Project = {
     usage?: string; // e.g. "Brand Logotype" or "User Interface"
     fontFile?: string; // e.g. "/fonts/august-bold.woff2"
   }[];
-  
+  /**
+   * Optional build-story beats rendered between the Overview and Showcase
+   * sections — prose + code, for projects where the engineering narrative
+   * is worth walking through (ported from the same shape used in lab.ts).
+   */
+  content?: ProjectContentBlock[];
+
   isSpotlight?: boolean;
   assets: ProjectAssets;
 };
@@ -278,6 +301,149 @@ export const PROJECTS: Project[] = [
       ],
     },
     isSpotlight: true,
+  },
+  {
+    slug: "worship-tools",
+    name: "Worship Tools",
+    year: "2026",
+    mission:
+      "A native PowerPoint VSTO add-in that replaces paid worship-presentation SaaS with real-time lyric slides and live scripture lookup, built directly into PowerPoint's object model.",
+    description:
+      "Worship Tools is a VSTO add-in engineered in VB.NET that hooks directly into PowerPoint's native COM object model. It exists to close two gaps at once: the recurring subscription cost of commercial worship-presentation software, and the live-production panic when a preacher calls out an unscripted Bible verse mid-sermon. A tiered, performance-conscious search indexes song libraries by filename first and falls back to a content-level scan, so results stay fast even as the library grows. A companion Node process (YouVersion.exe) runs locally on the machine to serve scripture across dozens of versions and languages on demand. A layout-mapping engine reads the active slide master, sorts placeholders by vertical position, and injects lyrics or verses into custom `Lyrics` and `Verse` layouts when they exist — falling back to safe default textboxes when they don't, so nothing ever breaks a live service.",
+    aboutMobile:
+      "A free PowerPoint add-in for churches — instant lyric slides and live scripture lookup, engineered directly into PowerPoint's object model.",
+    tags: ["Desktop Engineering", "Systems Automation", "Developer Tooling"],
+    keywords: ["Church Tech", "VSTO", "PowerPoint Automation", "Live Production", "COM Interop"],
+    technologies: ["VB.NET", "VSTO", "MS Office COM API", ".NET Framework 4.8", "Node.js", "ClickOnce"],
+    brandColor: "#4f46e5",
+    assets: {
+      cover: "/projects/worship-tools/cover.webp",
+      mockups: [
+        "/projects/worship-tools/sidebar-search.webp",
+        "/projects/worship-tools/scripture-panel.webp",
+        "/projects/worship-tools/add-song-dialog.webp",
+      ],
+      showcase: {
+        highlight: {
+          type: "video",
+          url: "/projects/worship-tools/showcase.mp4",
+        },
+        images: [
+          "/projects/worship-tools/cover.webp",
+          "/projects/worship-tools/showcase-2.webp",
+        ],
+      },
+      liveUrl: "https://kevern.gumroad.com/l/gxrycs",
+      mdxDocs: [
+        { title: "Project Overview", description: "Worship Tools — PowerPoint Add-In", url: "/projects/worship-tools/docs" },
+      ]
+    },
+    content: [
+      {
+        title: "The Overpriced SaaS Problem",
+        text: "Church presentation software is typically locked behind recurring subscription paywalls. For smaller congregations running on volunteer labor and tight budgets, paying every year just to display lyrics and manage service slides is an unnecessary bottleneck. I wanted a free alternative that met volunteers exactly where they already were: Microsoft PowerPoint.",
+      },
+      {
+        title: "The Live-Production Chaos",
+        text: "Beyond the tedious pre-production hours spent copy-pasting lyrics, the real pressure happens live. Preachers regularly call out unscripted scripture mid-sermon. In a standard setup, that sends the media team scrambling — open a browser, look up the verse, copy it, build a new slide, fix the font size, deploy it before the speaker moves on.",
+      },
+      {
+        title: "The Architecture & V1 Solution",
+        text: "I built a native VSTO (Visual Studio Tools for Office) add-in in VB.NET that hooks directly into PowerPoint's COM object model, exposing the tool as a utility right inside the Office ribbon. It automates text parsing, scales fonts dynamically, handles multi-slide lyric distribution, and queries a scripture database to generate an unscripted verse slide on the fly, mid-service.",
+      },
+      {
+        title: "Inside the VSTO Logic",
+        codeSnippets: [
+          {
+            title: "LyricSearchPane.vb",
+            description: "Tiered, performance-minded search strategy",
+            lang: "vbnet",
+            snippet: `Private Sub BuildTiers(files As List(Of String), filter As String,
+                       tier1 As List(Of String), tier2 As List(Of String), tier3 As List(Of String))
+    For Each f As String In files
+        Dim name As String = Path.GetFileNameWithoutExtension(f)
+
+        If name.StartsWith(filter, StringComparison.OrdinalIgnoreCase) Then
+            tier1.Add(f) ' Tier 1: Exact prefix matches
+        ElseIf name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0 Then
+            tier2.Add(f) ' Tier 2: Inline filename matches
+        Else
+            Try ' Tier 3: Content-level deep scan fallback
+                Dim content As String = File.ReadAllText(f)
+                If content.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0 Then
+                    tier3.Add(f)
+                End If
+            Catch
+                ' Gracefully bypass isolated file I/O locks during live services
+            End Try
+        End If
+    Next
+End Sub`,
+          },
+          {
+            title: "AddToSlide.vb",
+            description: "Visual layout mapper & placeholder sorting",
+            lang: "vbnet",
+            snippet: `' Collect all non-title placeholders in shape index order
+Dim nonTitlePlaceholders As New List(Of PowerPoint.Shape)
+For Each shape As PowerPoint.Shape In newSlide.Shapes
+    If shape.Type = MsoShapeType.msoPlaceholder AndAlso shape.HasTextFrame Then
+        Dim pt = shape.PlaceholderFormat.Type
+        If pt <> PowerPoint.PpPlaceholderType.ppPlaceholderTitle AndAlso
+           pt <> PowerPoint.PpPlaceholderType.ppPlaceholderCenterTitle Then
+            nonTitlePlaceholders.Add(shape)
+        End If
+    End If
+Next
+
+' Crucial fix: sort by vertical position so data order strictly matches visual layout
+nonTitlePlaceholders.Sort(Function(a, b) a.Top.CompareTo(b.Top))
+
+' Contextual injection based on available layout slots
+If nonTitlePlaceholders.Count >= 2 Then
+    nonTitlePlaceholders(0).TextFrame.TextRange.Text = citation
+    nonTitlePlaceholders(1).TextFrame.TextRange.Text = passage.Trim()
+Else
+    ' Dynamic fallback: programmatically construct balanced text boundaries on the fly
+    AddTextboxSlide(newSlide, citation, passage, 36)
+End If`,
+          },
+          {
+            title: "BibleFetch.vb",
+            description: "Zero-dependency JSON string extractor",
+            lang: "vbnet",
+            snippet: `Public Shared Function FromJson(json As String) As BibleFetchResult
+    Dim result As New BibleFetchResult()
+    result.Citation = ExtractJsonString(json, "citation")
+    result.Passage = ExtractJsonString(json, "passage")
+    Return result
+End Function
+
+Private Shared Function ExtractJsonString(json As String, key As String) As String
+    Dim searchKey = $"""{key}"""
+    Dim keyIdx = json.IndexOf(searchKey)
+    If keyIdx < 0 Then Return String.Empty
+
+    Dim colonIdx = json.IndexOf(":"c, keyIdx + searchKey.Length)
+    Dim quoteStart = json.IndexOf(""""c, colonIdx + 1)
+    Dim quoteEnd = json.IndexOf(""""c, quoteStart + 1)
+    If quoteStart < 0 OrElse quoteEnd < 0 Then Return String.Empty
+
+    Return json.Substring(quoteStart + 1, quoteEnd - quoteStart - 1)
+End Function`,
+          },
+        ],
+      },
+      {
+        title: "The Technical Roadblock",
+        text: "The V1 add-in solved the automation and real-time scripture problems cleanly, but ran into a hard limitation native to PowerPoint itself. PowerPoint treats media as isolated shapes bound to a single slide's timeline, so the audio/video clock resets on every slide transition — making a smooth, continuous motion background across multiple lyric slides structurally impossible in the current architecture. That constraint is now the spec for a follow-up: a decoupled rendering engine that owns the presentation clock instead of PowerPoint.",
+      },
+      {
+        title: "Shipping It",
+        text: "Worship Tools installs via a signed ClickOnce package, ships with a bundled YouVersion.exe for the Bible API, and supports English and Filipino scripture versions out of the box. It's now in active use running live service slides, and available for other volunteer media teams to install for free.",
+      },
+    ],
+    isSpotlight: false,
   },
   {
     slug: "edmer-software",
