@@ -218,7 +218,7 @@ export const PROJECTS: Project[] = [
       conclusions: "MSMEs don't have dedicated facilities engineers — they need a layout that speaks with absolute precision and surfaces errors before hardware damage occurs. Courant's design tokens were engineered around that reality. The logomark distills the system's underlying logic: high-frequency technical performance wrapped in structural, uniform boundaries. Color utility is purely algorithmic—functional yellow tokens trigger exclusively for anomaly thresholds, multi-tenant alert states, and hardware failures. The implementation successfully flattened complex LLM predictions and deep metrics into a clean, predictable utility dashboard.",
       liveUrl: "https://courant.energy",
     },
-    isSpotlight: true,  
+    isSpotlight: true,
   },
   {
     slug: "bataeno-pass",
@@ -281,7 +281,7 @@ export const PROJECTS: Project[] = [
           "/projects/bataeno-pass/showcase-2.webp",
         ],
       },
-      liveUrl: "http://140.245.101.250:8001/",
+      liveUrl: "https://bataeno-pass-barangay.kevern.cc/",
       extras: [
         "/projects/bataeno-pass/extra-1.webp",
         "/projects/bataeno-pass/extra-2.webp",
